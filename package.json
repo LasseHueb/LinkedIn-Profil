@@ -1,0 +1,14 @@
+{
+  "name": "profilbild-rahmen",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Profilbild-Rahmen mit eigenem Text – statische Web-App, Fotos bleiben im Browser.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && node scripts/serve.mjs",
+    "serve": "node scripts/serve.mjs",
+    "images": "node scripts/build.mjs && node scripts/render-images.mjs && node scripts/build.mjs"
+  }
+}

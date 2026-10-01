@@ -1,0 +1,39 @@
+{
+  "_hinweis": "Zentrale Einstellungen. Werte mit Umgebungsvariablen überschreibbar (siehe README). Nur öffentliche Werte eintragen – niemals geheime Schlüssel!",
+  "appName": "ProfilRing",
+  "siteUrl": "https://www.profilring.de",
+  "basePath": "",
+  "defaultLocale": "de",
+  "twitterHandle": "",
+
+  "premium": {
+    "price": "4,99 €",
+    "priceValue": 4.99,
+    "currency": "EUR"
+  },
+
+  "business": {
+    "starterPrice": "49 €",
+    "starterPriceValue": 49,
+    "teamPrice": "149 €",
+    "teamPriceValue": 149
+  },
+
+  "supabase": {
+    "url": "",
+    "anonKey": ""
+  },
+
+  "analytics": {
+    "_hinweis": "provider: \"plausible\" oder \"umami\" (beide cookieless). Leer lassen = keine Statistik.",
+    "provider": "",
+    "src": "",
+    "domain": "",
+    "websiteId": ""
+  },
+
+  "ads": {
+    "_hinweis": "Werbeplätze sind im Layout vorgesehen, aber deaktiviert. Vor dem Aktivieren Datenschutzerklärung + Consent-Banner ergänzen!",
+    "enabled": false
+  }
+}

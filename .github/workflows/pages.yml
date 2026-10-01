@@ -1,5 +1,7 @@
 name: GitHub Pages
 
+# Alternative zu Netlify/Vercel. Hinweis: Auf GitHub Pages ohne eigene Domain läuft die Seite
+# unter /<repo>/ – dafür setzt der Build BASE_PATH. Mit eigener Domain BASE_PATH leer lassen.
 on:
   push:
     branches: [main]
@@ -22,9 +24,24 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - id: pages
+        uses: actions/configure-pages@v5
+      - name: Build
+        run: node scripts/build.mjs
+        env:
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.origin }}
+          BASE_PATH: ${{ vars.SITE_URL && '' || steps.pages.outputs.base_path }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          ANALYTICS_PROVIDER: ${{ vars.ANALYTICS_PROVIDER }}
+          ANALYTICS_SRC: ${{ vars.ANALYTICS_SRC }}
+          ANALYTICS_DOMAIN: ${{ vars.ANALYTICS_DOMAIN }}
+          ANALYTICS_WEBSITE_ID: ${{ vars.ANALYTICS_WEBSITE_ID }}
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4
