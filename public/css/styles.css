@@ -586,3 +586,4 @@ input[type="email"], input[type="url"] { width: 100%; min-height: 44px; padding:
 .compare { width: 100%; border-collapse: collapse; font-size: .92rem; }
 .compare td { padding: 6px 0; border-bottom: 1px solid var(--border); }
 .compare td:last-child { text-align: right; font-weight: 800; color: var(--ok-text); width: 2em; }
+.inline-form input.plain { font-family: inherit; text-transform: none; }

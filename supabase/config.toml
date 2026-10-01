@@ -17,3 +17,9 @@ verify_jwt = false
 
 [functions.license-recover]
 verify_jwt = false
+
+[functions.billing-portal]
+verify_jwt = false
+
+[functions.contact]
+verify_jwt = false

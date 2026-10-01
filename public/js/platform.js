@@ -53,6 +53,10 @@ window.PBG = window.PBG || {};
         });
       });
     },
+    /** Öffentliche URL einer Datei im Supabase Storage. */
+    storageUrl: function (bucket, path) {
+      return sb.url + "/storage/v1/object/public/" + bucket + "/" + String(path).split("/").map(encodeURIComponent).join("/");
+    },
     /** Öffentliche Datenbankfunktion (RPC) aufrufen. */
     rpc: function (fn, args) {
       if (!PBG.api.enabled) return Promise.reject(new Error("backend-disabled"));
