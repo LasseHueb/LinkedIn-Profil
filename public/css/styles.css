@@ -530,7 +530,8 @@ input[type="email"], input[type="url"] { width: 100%; min-height: 44px; padding:
 .key-entry { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
 .key-entry summary { cursor: pointer; font-weight: 700; font-size: .9rem; }
 .inline-form { display: flex; gap: 8px; margin-top: 10px; }
-.inline-form input { flex: 1; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
+.inline-form input { flex: 1; min-width: 0; }
+.inline-form input[type="text"] { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
 
 .share-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0 8px; }
 .share-btn {
@@ -582,3 +583,6 @@ input[type="email"], input[type="url"] { width: 100%; min-height: 44px; padding:
 .presets-premium.collapsed .preset:nth-child(n+9) { display: none; }
 .more-presets { margin-top: 10px; }
 .prose, .legal { overflow-wrap: break-word; hyphens: auto; }
+.compare { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.compare td { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.compare td:last-child { text-align: right; font-weight: 800; color: var(--ok-text); width: 2em; }

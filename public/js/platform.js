@@ -134,7 +134,7 @@ window.PBG = window.PBG || {};
 
     checkout: function () {
       PBG.track("Upgrade Checkout");
-      return PBG.api.call("create-checkout", { product: "premium", locale: PBG.lang || "de" }).then(function (res) {
+      return PBG.api.call("create-checkout", { product: "premium", consent: true, locale: PBG.lang || "de" }).then(function (res) {
         if (res.url) location.href = res.url;
         return res;
       });
@@ -165,4 +165,37 @@ window.PBG = window.PBG || {};
 
   PBG.premium = premium;
   premium.init();
+
+  // ---------- Farbschema-Schalter (alle Seiten) ----------
+  function bindThemeSwitch() {
+    var sw = document.getElementById("theme-switch");
+    if (!sw) return;
+    var buttons = Array.from(sw.querySelectorAll("button"));
+    function apply(value) {
+      if (value === "light" || value === "dark") document.documentElement.setAttribute("data-theme", value);
+      else document.documentElement.removeAttribute("data-theme");
+      buttons.forEach(function (b) {
+        var on = b.dataset.themeValue === value;
+        b.setAttribute("aria-checked", String(on));
+        b.tabIndex = on ? 0 : -1;
+      });
+    }
+    apply(PBG.storage.get("pbg-theme") || "auto");
+    buttons.forEach(function (b, i) {
+      b.addEventListener("click", function () {
+        PBG.storage.set("pbg-theme", b.dataset.themeValue);
+        apply(b.dataset.themeValue);
+      });
+      b.addEventListener("keydown", function (e) {
+        var dir = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+        if (!dir) return;
+        e.preventDefault();
+        var next = buttons[(i + dir + buttons.length) % buttons.length];
+        next.click();
+        next.focus();
+      });
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bindThemeSwitch);
+  else bindThemeSwitch();
 })();

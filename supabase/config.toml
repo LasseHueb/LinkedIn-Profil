@@ -1,0 +1,19 @@
+# Supabase-Projektkonfiguration (Ausschnitt für `supabase functions deploy`).
+# JWT-Prüfung ist aus, weil die Funktionen öffentlich mit dem Publishable/Anon-Key aufgerufen werden
+# bzw. Stripe keinen JWT sendet. Wo nötig, prüfen die Funktionen den Benutzer selbst.
+project_id = "profilring"
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.license-claim]
+verify_jwt = false
+
+[functions.license-verify]
+verify_jwt = false
+
+[functions.license-recover]
+verify_jwt = false
