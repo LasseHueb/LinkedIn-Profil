@@ -54,7 +54,7 @@ export async function issueLicense(session: Session): Promise<{ key: string; ema
 }
 
 export async function sendLicenseEmail(email: string, keys: string[], purchase: boolean) {
-  const app = Deno.env.get("APP_NAME") ?? "ProfilRing";
+  const app = Deno.env.get("APP_NAME") ?? "RingLabel";
   const list = keys.map((k) => `<p style="margin:14px 0"><code style="font-size:17px;background:#eef1f5;padding:6px 10px;border-radius:8px">${escapeHtml(k)}</code><br>
     <a href="${magicLink(k)}" style="display:inline-block;margin-top:10px;background:#1a5ccc;color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;font-weight:700">Premium auf diesem Gerät aktivieren</a></p>`).join("");
   const consent = purchase

@@ -1,6 +1,7 @@
 /*
  * Impressum, Datenschutzerklärung, AGB, Widerrufsbelehrung.
- * Kostenlose Edition: nur Impressum und eine eigene, kürzere Datenschutzerklärung (es wird nichts verkauft).
+ * Kostenlose Edition: eigenes Impressum und eigene Datenschutzerklärung für ein privates, nicht-kommerzielles
+ * Projekt, ohne Platzhalter (Angaben in config/site.json → legal). Die Vollversion nutzt die Vorlagen unten.
  * WICHTIG: Vorlagen mit Platzhaltern – vor dem Livegang ausfüllen und rechtlich prüfen lassen
  * (z. B. über einen Generator wie e-recht24 oder eine Anwaltskanzlei). Keine Rechtsberatung.
  */
@@ -42,47 +43,59 @@ export default function pages(ctx) {
     <h2>Hinweis</h2>
     <p>${app} ist ein unabhängiges Angebot und steht in keiner Verbindung zu LinkedIn, Xing, Instagram, WhatsApp oder anderen Netzwerken. Genannte Marken gehören ihren jeweiligen Inhabern.</p>`;
 
-  const analytics = ctx.cfg.analytics || {};
-  const analyticsName = analytics.provider === "plausible" ? "Plausible Analytics (Plausible Insights OÜ, Estland)"
-    : analytics.provider === "umami" ? "Umami" : "Plausible Analytics (Plausible Insights OÜ, Estland) / Umami (selbst gehostet)";
+  // ---------- Kostenlose Edition: privates, nicht-kommerzielles Projekt (Angaben aus config/site.json → legal) ----------
+  const L = ctx.cfg.legal || {};
+  const owner = `${esc(L.name)}<br>${esc(L.street)}<br>${esc(L.city)}<br>${esc(L.country)}`;
+  const mail = `<a href="mailto:${esc(L.email)}">${esc(L.email)}</a>`;
 
-  // Datenschutzerklärung der kostenlosen Edition: keine Zahlungen, keine Konten, keine Cookies, kein Backend
+  const impressumFree = `
+    <h2>Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG)</h2>
+    <p>${owner}</p>
+    <h2>Kontakt</h2>
+    <p>E-Mail: ${mail}</p>
+    <h2>Hinweis</h2>
+    <p>${app} ist ein privates, nicht-kommerzielles Projekt. Die Nutzung ist kostenlos, es werden keine Waren oder Dienstleistungen verkauft.</p>
+    <h2>Haftung für Links</h2>
+    <p>Diese Website enthält Links zu externen Websites Dritter (z. B. LinkedIn, WhatsApp, X), auf deren Inhalte ich keinen Einfluss habe. Für diese Inhalte ist der jeweilige Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich solche Links umgehend.</p>`;
+
+  // Muss zur Technik passen: localStorage-Schlüssel siehe public/js/platform.js (pbg-theme) und app.js (pbg-share-dismissed);
+  // keine Cookies, keine Anfragen an fremde Server (prüft scripts/check-dist.mjs).
   const datenschutzFree = `
-    <p><strong>Kurz gesagt:</strong> Deine Fotos verlassen nie deinen Browser. Es gibt keine Zahlungen, keine Benutzerkonten und keine Cookies. Wir speichern keine personenbezogenen Daten von dir auf eigenen Servern – ${app} läuft vollständig in deinem Browser.</p>
+    <h2>Das Wichtigste in Kürze</h2>
+    <p>Deine Fotos verlassen nie deinen Browser. Die Bearbeitung und der Export finden vollständig auf deinem Gerät statt. Es gibt keine Benutzerkonten, keine Cookies, kein Tracking und keine Werbung.</p>
 
     <h2>1. Verantwortlicher</h2>
-    <p>${P("Vorname Nachname")}, ${P("Straße Hausnummer, PLZ Ort")}, E-Mail: ${P("datenschutz@deine-domain.de")}</p>
+    <p>${esc(L.name)}, ${esc(L.street)}, ${esc(L.city)}, ${esc(L.country)}<br>E-Mail: ${mail}</p>
 
-    <h2>2. Fotos und Bildbearbeitung</h2>
-    <p>Die Bearbeitung deines Fotos (Zuschnitt, Rahmen, Text, Export) erfolgt ausschließlich lokal in deinem Browser. Das Foto wird zu keinem Zeitpunkt an unsere oder fremde Server übertragen und nicht gespeichert. Auch das fertige Bild entsteht direkt auf deinem Gerät. Schließt du die Seite, ist das Foto aus dem Arbeitsspeicher entfernt.</p>
+    <h2>2. Hosting über GitHub Pages</h2>
+    <p>Diese Website wird über GitHub Pages bereitgestellt, einen Dienst der GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. Beim Aufruf der Seite verarbeitet GitHub technisch notwendige Daten wie deine IP-Adresse, Datum und Uhrzeit des Zugriffs, die aufgerufene Seite sowie Browser- und Betriebssystem-Informationen, um die Seite auszuliefern und vor Missbrauch zu schützen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; mein berechtigtes Interesse liegt in der sicheren und zuverlässigen Bereitstellung der Website.</p>
+    <p>Dabei können Daten in die USA übermittelt werden. GitHub ist unter dem EU-US Data Privacy Framework zertifiziert; ergänzend gelten die EU-Standardvertragsklauseln. Weitere Informationen: <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement</a></p>
 
-    <h2>3. Hosting und Server-Logfiles</h2>
-    <p>Die Website wird bei ${P("GitHub Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA")} gehostet. Beim Aufruf der Seite verarbeitet der Hoster technisch notwendige Daten (IP-Adresse, Datum/Uhrzeit, aufgerufene Seite, Browsertyp), um die Website auszuliefern und vor Missbrauch zu schützen. Wir selbst haben darauf keinen Zugriff und werten diese Daten nicht aus. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer sicheren und funktionsfähigen Website). Eine Übermittlung in die USA erfolgt auf Grundlage des EU-US Data Privacy Framework bzw. von Standardvertragsklauseln. Datenschutzhinweise des Hosters: ${P("https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement")}</p>
+    <h2>3. Verarbeitung deiner Fotos</h2>
+    <p>Hochgeladene Fotos werden ausschließlich lokal in deinem Browser verarbeitet. Sie werden weder an mich noch an GitHub oder andere Dritte übertragen und nicht gespeichert. Sobald du die Seite schließt, sind sie aus dem Speicher entfernt.</p>
 
-    <h2>4. Keine Cookies, nur lokale Einstellungen</h2>
-    <p>Wir setzen keine Cookies. Im <em>localStorage</em> deines Browsers speichern wir lediglich dein gewähltes Farbschema (hell/dunkel) und ob du den Teilen-Dialog ausgeblendet hast. Diese Angaben bleiben auf deinem Gerät, werden nicht an uns übertragen, sind für die gewünschte Funktion unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG) und lassen sich jederzeit über die Browsereinstellungen löschen.</p>
+    <h2>4. Lokaler Speicher im Browser</h2>
+    <p>Damit die App sich bestimmte Einstellungen merken kann (z. B. „Nicht mehr anzeigen“ beim Teilen-Hinweis), speichert sie kleine Werte im lokalen Speicher deines Browsers (localStorage). Diese Daten bleiben auf deinem Gerät und werden nicht übertragen. Die Speicherung ist für die von dir gewünschte Funktion unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst sie jederzeit über die Einstellungen deines Browsers löschen.</p>
+    <p>Genutzt werden genau zwei Einträge, und zwar erst, wenn du die jeweilige Einstellung änderst:</p>
+    <ul>
+      <li><code>pbg-theme</code>: dein gewähltes Farbschema (System, Hell oder Dunkel)</li>
+      <li><code>pbg-share-dismissed</code>: dass du „Nicht mehr anzeigen“ beim Teilen-Hinweis angehakt hast</li>
+    </ul>
 
-    <h2>5. Keine Zahlungen, keine Konten</h2>
-    <p>Die Nutzung ist kostenlos und ohne Anmeldung möglich. Wir verkaufen nichts, legen keine Benutzerkonten an und erheben weder Namen noch E-Mail-Adressen oder Zahlungsdaten.</p>
+    <h2>5. Keine Cookies, kein Tracking</h2>
+    <p>Diese Website setzt keine Cookies und verwendet keine Analyse- oder Tracking-Dienste. Alle Schriftarten und Skripte werden direkt von dieser Website geladen, nicht von Drittanbietern.</p>
 
-    <h2>6. Reichweitenmessung</h2>
-    ${analytics.provider
-      ? `<p>Wir nutzen ${P(analyticsName)}, um anonyme Nutzungsstatistiken zu erstellen (z. B. Seitenaufrufe, Anzahl Downloads). Es werden keine Cookies gesetzt und keine personenbezogenen Profile gebildet; IP-Adressen werden nur gekürzt bzw. gehasht verarbeitet und nicht gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Verbesserung des Angebots).</p>`
-      : `<p>Wir setzen derzeit keine Werkzeuge zur Reichweitenmessung oder zum Tracking ein.</p>`}
+    <h2>6. Teilen-Funktion</h2>
+    <p>Nach dem Download kannst du die App über Schaltflächen für LinkedIn, WhatsApp oder X weiterempfehlen. Diese Schaltflächen sind einfache Links: Erst wenn du darauf klickst, wird die jeweilige Plattform aufgerufen, und es gelten deren Datenschutzbestimmungen. Vorher werden keine Daten an diese Anbieter übertragen. „Link kopieren“ und die Teilen-Funktion deines Geräts arbeiten lokal.</p>
 
-    <h2>7. Teilen-Funktion und externe Links</h2>
-    <p>Nach dem Download kannst du die App über LinkedIn, WhatsApp oder X weiterempfehlen. Diese Schaltflächen sind einfache Links: Erst wenn du darauf klickst, wird die jeweilige Plattform aufgerufen und erhält dabei die üblichen Verbindungsdaten. Dein Foto wird dabei nicht übertragen. Für die Verarbeitung auf diesen Plattformen gelten deren Datenschutzbestimmungen.</p>
+    <h2>7. Kontakt per E-Mail</h2>
+    <p>Wenn du mir eine E-Mail schreibst, verarbeite ich deine Angaben nur, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. f DSGVO). Die E-Mail lösche ich, sobald sie erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
 
-    <h2>8. Kontakt per E-Mail</h2>
-    <p>Schreibst du uns eine E-Mail, verarbeiten wir deine E-Mail-Adresse und den Inhalt der Nachricht nur, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. f DSGVO). Wir löschen die Nachricht, sobald sie erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
+    <h2>8. Deine Rechte</h2>
+    <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit (Art. 15–20 DSGVO) sowie das Recht, der Verarbeitung zu widersprechen (Art. 21 DSGVO). Wende dich dazu einfach per E-Mail an mich.</p>
+    <p>Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel bei: ${esc(L.authority)}, <a href="https://${esc(L.authorityUrl)}" rel="noopener">${esc(L.authorityUrl)}</a></p>
 
-    <h2>9. Deine Rechte</h2>
-    <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO) sowie das Recht auf Beschwerde bei einer Aufsichtsbehörde, z. B. ${P("Landesdatenschutzbehörde deines Bundeslandes")}.</p>
-
-    <h2>10. Werbung</h2>
-    <p>Auf dieser Website wird keine Werbung ausgespielt. Sollte sich das ändern, holen wir vorher deine Einwilligung ein und passen diese Erklärung an.</p>
-
-    <p class="small muted">Stand: ${today}</p>`;
+    <p class="small muted">Stand: ${esc(L.privacyDate)}</p>`;
 
   const datenschutz = `
     <p><strong>Kurz gesagt:</strong> Deine Fotos verlassen nie deinen Browser. Wir setzen keine Cookies und kein Tracking ein, das dich über Websites hinweg verfolgt. Personenbezogene Daten verarbeiten wir nur, wenn du Premium kaufst, ein Firmen-Konto nutzt oder uns kontaktierst.</p>
@@ -166,8 +179,8 @@ export default function pages(ctx) {
 
   if (!ctx.full) {
     return [
-      legalPage(ctx, "/impressum/", "Impressum", `Impressum von ${ctx.cfg.appName}.`, impressum),
-      legalPage(ctx, "/datenschutz/", "Datenschutzerklärung", "Datenschutz: Deine Fotos verlassen nie deinen Browser. Keine Cookies, keine Konten, keine Zahlungen.", datenschutzFree)
+      legalPage(ctx, "/impressum/", "Impressum", `Impressum von ${ctx.cfg.appName}.`, impressumFree),
+      legalPage(ctx, "/datenschutz/", "Datenschutzerklärung", "Datenschutz: Deine Fotos verlassen nie deinen Browser. Keine Cookies, keine Konten, kein Tracking.", datenschutzFree)
     ];
   }
   return [

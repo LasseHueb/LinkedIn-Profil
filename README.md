@@ -1,10 +1,10 @@
-# ProfilRing – Profilbild-Rahmen mit eigenem Text
+# RingLabel – Profilbild-Rahmen mit eigenem Text
 
 Web-App für runde Profilbild-Rahmen wie „Open to Work“ oder „Hiring“, aber mit freiem Text und Design. Dazu kommen virale Verbreitung, SEO-Landingpages, Premium (Einmalkauf) und Firmen-Pakete.
 
 **Grundprinzip:** Fotos werden ausschließlich im Browser verarbeitet und **nie** hochgeladen. Das Backend speichert nur Lizenzen, Firmen-Konten und Rahmen-Einstellungen.
 
-> „ProfilRing“ und `profilring.de` sind Platzhalter. Name, Domain und Preise änderst du zentral in `config/site.json`.
+> Name, Adresse (vorerst `https://lassehueb.github.io/LinkedIn-Profil`) und Preise stehen zentral in `config/site.json`. Die Angaben für Impressum und Datenschutz der kostenlosen Edition stehen dort unter `legal`.
 
 > **Edition:** Standardmäßig wird die **kostenlose Version** gebaut (`"edition": "free"`): nur der Editor, ohne Backend, ohne Premium und ohne Firmen-Pakete. Mit `EDITION=full` ist alles wieder da – siehe [Editionen: free und full](#editionen-free-und-full).
 
@@ -65,7 +65,7 @@ src/
   pages/*.mjs             Seiten-Generatoren (core, legal, premium, business)
 scripts/
   build.mjs               Statischer Build nach dist/ (ohne Abhängigkeiten, Edition free/full)
-  check-dist.mjs          Prüft dist/ auf tote Links und (bei free) Bezahl-Hinweise
+  check-dist.mjs          Prüft dist/: tote Links, alter Name, bei free Bezahl-Hinweise, Platzhalter, fremde Server
   serve.mjs               Lokaler Webserver
   render-images.mjs       Erzeugt Beispiel- und OG-Bilder mit dem echten Renderer
 supabase/
@@ -80,7 +80,7 @@ Voraussetzung: [Node.js](https://nodejs.org) ab Version 20. Weitere Pakete werde
 ```bash
 npm run dev          # kostenlose Edition bauen und http://localhost:8080 starten
 npm run dev:full     # dasselbe mit Premium und Firmen-Paketen
-npm run check        # dist/ prüfen: tote Links, BASE_PATH, bei "free" keine Bezahl-Hinweise
+npm run check        # dist/ prüfen: tote Links, BASE_PATH, alter Name; bei "free" auch Bezahl-Hinweise, Platzhalter, fremde Server
 ```
 
 - Premium testen ohne Kauf (nur `dev:full`): `http://localhost:8080/?premium=dev` (funktioniert nur auf localhost; mit `?premium=off` wieder aus)
@@ -159,7 +159,7 @@ Alles zuerst im **Testmodus** einrichten und durchspielen (Testkarte `4242 4242 
 1. **Produkte anlegen** (Produktkatalog → Produkt hinzufügen):
    | Produkt | Preis | Abrechnung |
    |---|---|---|
-   | ProfilRing Premium | 4,99 € **inkl.** USt. | einmalig |
+   | RingLabel Premium | 4,99 € **inkl.** USt. | einmalig |
    | Firmen-Paket Starter | 49 € **zzgl.** USt. | wiederkehrend, jährlich |
    | Firmen-Paket Team | 149 € **zzgl.** USt. | wiederkehrend, jährlich |
    
@@ -179,7 +179,7 @@ Alles zuerst im **Testmodus** einrichten und durchspielen (Testkarte `4242 4242 
 Wird für Lizenz-Mails, den Magic-Link „Schlüssel verloren?“ und die Benachrichtigung zum Kontaktformular gebraucht.
 
 1. Konto auf [resend.com](https://resend.com) anlegen, **Domain verifizieren** (DNS-Einträge SPF/DKIM bei deinem Domain-Anbieter setzen)
-2. API-Key erzeugen → `RESEND_API_KEY`; Absender `EMAIL_FROM` z. B. `ProfilRing <hallo@deine-domain.de>`; Empfänger für Anfragen `CONTACT_EMAIL`
+2. API-Key erzeugen → `RESEND_API_KEY`; Absender `EMAIL_FROM` z. B. `RingLabel <hallo@deine-domain.de>`; Empfänger für Anfragen `CONTACT_EMAIL`
 3. Dieselben Zugangsdaten als SMTP in Supabase Auth eintragen (Host `smtp.resend.com`, Port 465, Benutzer `resend`, Passwort = API-Key)
 
 ## Statistik ohne Cookies
@@ -212,7 +212,7 @@ Der Workflow `.github/workflows/pages.yml` baut bei jedem Push auf `main`, prüf
 3. Optional unter *Settings → Secrets and variables → Actions → Variables*:
    - `SITE_URL` mit eigener Domain (z. B. `https://www.deine-domain.de`): dann bleibt `BASE_PATH` leer. Die Domain zusätzlich unter *Settings → Pages → Custom domain* eintragen.
    - `EDITION=full` plus `SUPABASE_URL`, `SUPABASE_ANON_KEY` für die Vollversion. Team-Links funktionieren dort über eine Weiterleitung in der `404.html`.
-   - Statistik-Variablen (`ANALYTICS_*`). Dann erwähnt die Datenschutzerklärung den Dienst automatisch.
+   - Statistik-Variablen (`ANALYTICS_*`), nur für `full`. Die Datenschutzerklärung der kostenlosen Edition sagt „kein Tracking, keine fremden Server“; `npm run check` lässt den Build deshalb fehlschlagen, sobald dort ein externes Skript eingebunden ist.
 
 Hinweis: Unter `/<repo>/` liegt die `robots.txt` nicht im Domain-Stamm und wird von Suchmaschinen ignoriert; die Sitemap bei Bedarf direkt in der Search Console einreichen. Mit eigener Domain entfällt das.
 
@@ -231,7 +231,7 @@ Hinweis: Unter `/<repo>/` liegt die `robots.txt` nicht im Domain-Stamm und wird 
 ## Checkliste vor dem Livegang
 
 - [ ] App-Name, Domain und Preise in `config/site.json` angepasst, Bilder neu erzeugt (`npm run images`)
-- [ ] **Impressum, Datenschutzerklärung** (bei `full` zusätzlich **AGB, Widerruf**): alle gelb markierten Platzhalter ausgefüllt und rechtlich prüfen lassen (die Texte sind Vorlagen, keine Rechtsberatung)
+- [ ] `free`: Impressum und Datenschutzerklärung kommen ohne Platzhalter aus `config/site.json` → `legal` (`npm run check` prüft das). `full`: Impressum, Datenschutzerklärung, AGB und Widerruf enthalten gelb markierte Platzhalter, die vor dem Livegang ausgefüllt werden müssen. Rechtlich prüfen lassen (die Texte sind Vorlagen, keine Rechtsberatung)
 - [ ] nur `full`: Umsatzsteuer-Status geklärt (Kleinunternehmer oder Stripe Tax)
 - [ ] nur `full`: Testkauf Premium + Firmen-Paket im Stripe-Testmodus, Erstattung testen, danach Live-Schlüssel eintragen
 - [ ] nur `full`: Magic-Link-Login und Lizenz-E-Mail kommen an (Spam-Ordner prüfen)

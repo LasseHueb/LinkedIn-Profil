@@ -22,7 +22,7 @@ export function escapeHtml(s: string): string {
 
 /** Schlichtes, gut lesbares Mail-Layout. */
 export function layout(title: string, bodyHtml: string): string {
-  const app = escapeHtml(Deno.env.get("APP_NAME") ?? "ProfilRing");
+  const app = escapeHtml(Deno.env.get("APP_NAME") ?? "RingLabel");
   return `<!doctype html><html lang="de"><body style="margin:0;background:#f5f7fa;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#16202c">
   <div style="max-width:560px;margin:0 auto;padding:32px 20px">
     <p style="font-weight:700;font-size:18px;margin:0 0 20px">${app}</p>

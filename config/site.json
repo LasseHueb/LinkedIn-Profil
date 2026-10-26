@@ -2,11 +2,23 @@
   "_hinweis": "Zentrale Einstellungen. Werte mit Umgebungsvariablen überschreibbar (siehe README). Nur öffentliche Werte eintragen – niemals geheime Schlüssel!",
   "edition": "free",
   "_hinweis_edition": "\"free\" = nur kostenloser Editor ohne Backend (Premium/Firmen-Pakete ausgeblendet), \"full\" = alles. Per Umgebungsvariable EDITION überschreibbar.",
-  "appName": "ProfilRing",
-  "siteUrl": "https://www.profilring.de",
+  "appName": "RingLabel",
+  "siteUrl": "https://lassehueb.github.io/LinkedIn-Profil",
   "basePath": "",
   "defaultLocale": "de",
   "twitterHandle": "",
+
+  "legal": {
+    "_hinweis": "Angaben für Impressum und Datenschutzerklärung der Edition free (privates, nicht-kommerzielles Projekt).",
+    "name": "Lasse Hübner",
+    "street": "Theodor-Francke-Weg 33",
+    "city": "38116 Braunschweig",
+    "country": "Deutschland",
+    "email": "huebner.lasse@icloud.com",
+    "authority": "Die Landesbeauftragte für den Datenschutz Niedersachsen, Prinzenstraße 5, 30159 Hannover",
+    "authorityUrl": "www.lfd.niedersachsen.de",
+    "privacyDate": "Oktober 2026"
+  },
 
   "premium": {
     "price": "4,99 €",
