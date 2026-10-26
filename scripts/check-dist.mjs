@@ -3,7 +3,10 @@
  * Prüft den fertigen Build in dist/ (nach node scripts/build.mjs):
  *   - alle internen Links und Ressourcen (href, src, content, Sitemap, Manifest, CSS-url()) zeigen auf existierende Dateien
  *   - alle internen URLs beginnen mit BASE_PATH (wichtig für GitHub Pages unter /<repo>/)
- *   - Edition "free": nirgends „Premium“, „PRO“, „Unternehmen“ oder „Stripe“; kein supabase.js
+ *   - nirgends der alte Name „ProfilRing“ bzw. „profilring“
+ *   - Edition "free": nirgends „Premium“, „PRO“, „Unternehmen“ oder „Stripe“; kein supabase.js;
+ *     Impressum und Datenschutz ohne Platzhalter oder [eckige Klammern];
+ *     keine Skripte, Styles, Schriften oder Bilder von fremden Servern (die Datenschutzerklärung schließt das aus)
  * Aufruf: node scripts/check-dist.mjs   (Exit-Code 1 bei Fehlern)
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
@@ -58,17 +61,49 @@ for (const f of files.filter((f) => /\.(html|xml|webmanifest|txt|css)$/.test(f))
   }
 }
 
+// ---------- Alter Name ----------
+const binary = (f) => /\.(woff2|png|jpe?g|webp|ico)$/.test(f);
+for (const f of files.filter((f) => !binary(f))) {
+  readFileSync(f, "utf8").split("\n").forEach((line, i) => {
+    const m = line.match(/profilring/i);
+    if (m) errors.push(`Alter Name „${m[0]}“ in ${rel(f)}:${i + 1}`);
+  });
+}
+
 // ---------- Edition "free": keine Hinweise auf kostenpflichtige Angebote ----------
 if (edition === "free") {
   const words = /\b(Premium|PRO|Unternehmen|Stripe)\b/;
   for (const f of files) {
-    if (/\.(woff2|png|jpe?g|webp|ico)$/.test(f) || /(^|\/)LICENSE-[^/]+\.txt$/.test(rel(f))) continue;
+    if (binary(f) || /(^|\/)LICENSE-[^/]+\.txt$/.test(rel(f))) continue;
     readFileSync(f, "utf8").split("\n").forEach((line, i) => {
       const m = line.match(words);
       if (m) errors.push(`„${m[1]}“ in ${rel(f)}:${i + 1}`);
     });
   }
   if (existsSync(join(dist, "vendor/supabase.js"))) errors.push("vendor/supabase.js ist in der kostenlosen Edition enthalten");
+
+  // Rechtstexte müssen vollständig ausgefüllt sein
+  for (const page of ["impressum/index.html", "datenschutz/index.html"]) {
+    const f = join(dist, page);
+    if (!existsSync(f)) { errors.push(`${page} fehlt`); continue; }
+    const main = (readFileSync(f, "utf8").match(/<main[\s\S]*<\/main>/) || [""])[0];
+    if (/class="placeholder"/.test(main)) errors.push(`Gelb markierter Platzhalter in ${page}`);
+    const text = main.replace(/<[^>]+>/g, " ");
+    for (const m of text.matchAll(/\[[^\]]*\]/g)) errors.push(`Platzhalter ${m[0].trim()} in ${page}`);
+  }
+
+  // Keine Ressourcen von fremden Servern (Links zum Anklicken sind erlaubt)
+  for (const f of files.filter((f) => /\.(html|css)$/.test(f))) {
+    const s = readFileSync(f, "utf8");
+    const res = [
+      ...[...s.matchAll(/<(?:script|img|iframe|source|video|audio)\b[^>]*\ssrc="([^"]+)"/g)].map((m) => m[1]),
+      ...[...s.matchAll(/<link\b[^>]*>/g)].map((m) => m[0]).filter((t) => !/rel="canonical"/.test(t)).map((t) => (t.match(/href="([^"]+)"/) || [])[1]),
+      ...[...s.matchAll(/(?:url\(|@import\s+)["']?([^"')\s;]+)/g)].map((m) => m[1])
+    ].filter(Boolean);
+    for (const u of res) {
+      if ((/^(https?:)?\/\//.test(u)) && !u.startsWith(siteUrl + "/")) errors.push(`Ressource von fremdem Server in ${rel(f)}: ${u}`);
+    }
+  }
 }
 
 if (errors.length) {
