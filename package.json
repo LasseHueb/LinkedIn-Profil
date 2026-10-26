@@ -7,8 +7,11 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "build:full": "node scripts/build.mjs --edition=full",
     "dev": "node scripts/build.mjs && node scripts/serve.mjs",
+    "dev:full": "node scripts/build.mjs --edition=full && node scripts/serve.mjs",
     "serve": "node scripts/serve.mjs",
-    "images": "node scripts/build.mjs && node scripts/render-images.mjs && node scripts/build.mjs"
+    "check": "node scripts/check-dist.mjs",
+    "images": "node scripts/build.mjs --edition=full && node scripts/render-images.mjs && node scripts/build.mjs"
   }
 }

@@ -6,6 +6,8 @@ Web-App für runde Profilbild-Rahmen wie „Open to Work“ oder „Hiring“, a
 
 > „ProfilRing“ und `profilring.de` sind Platzhalter. Name, Domain und Preise änderst du zentral in `config/site.json`.
 
+> **Edition:** Standardmäßig wird die **kostenlose Version** gebaut (`"edition": "free"`): nur der Editor, ohne Backend, ohne Premium und ohne Firmen-Pakete. Mit `EDITION=full` ist alles wieder da – siehe [Editionen: free und full](#editionen-free-und-full).
+
 ---
 
 ## Inhalt
@@ -13,15 +15,16 @@ Web-App für runde Profilbild-Rahmen wie „Open to Work“ oder „Hiring“, a
 1. [Funktionen](#funktionen)
 2. [Projektstruktur](#projektstruktur)
 3. [Lokal starten](#lokal-starten)
-4. [Konfiguration](#konfiguration)
-5. [Supabase einrichten](#supabase-einrichten)
-6. [Stripe einrichten](#stripe-einrichten)
-7. [E-Mail (Resend) einrichten](#e-mail-resend-einrichten)
-8. [Statistik ohne Cookies](#statistik-ohne-cookies)
-9. [Deployment (Netlify oder Vercel)](#deployment)
-10. [Eigene Domain](#eigene-domain)
-11. [Checkliste vor dem Livegang](#checkliste-vor-dem-livegang)
-12. [Hinweise & Grenzen](#hinweise--grenzen)
+4. [Editionen: free und full](#editionen-free-und-full)
+5. [Konfiguration](#konfiguration)
+6. [Supabase einrichten](#supabase-einrichten)
+7. [Stripe einrichten](#stripe-einrichten)
+8. [E-Mail (Resend) einrichten](#e-mail-resend-einrichten)
+9. [Statistik ohne Cookies](#statistik-ohne-cookies)
+10. [Deployment (Netlify oder Vercel)](#deployment)
+11. [Eigene Domain](#eigene-domain)
+12. [Checkliste vor dem Livegang](#checkliste-vor-dem-livegang)
+13. [Hinweise & Grenzen](#hinweise--grenzen)
 
 ---
 
@@ -41,7 +44,7 @@ Lighthouse (mobil, lokal ohne Kompression gemessen): Startseite Performance 93 �
 ## Projektstruktur
 
 ```
-config/site.json          Zentrale Einstellungen (Name, Domain, Preise, Supabase, Statistik, Werbung)
+config/site.json          Zentrale Einstellungen (Edition, Name, Domain, Preise, Supabase, Statistik, Werbung)
 public/                   Statische Dateien, werden 1:1 ausgeliefert
   js/renderer.js          Canvas-Rendering (Foto, Ring, gebogener Text, Symbole, Logo, Hinweis)
   js/app.js               Editor-Logik (Modi: public / admin / team), Premium-Sperren, Teilen-Dialog
@@ -56,11 +59,13 @@ public/                   Statische Dateien, werden 1:1 ausgeliefert
   fonts/ vendor/          Lokale Schriften (OFL), heic2any, supabase-js
 src/
   content.mjs             Texte der Landingpages (Title, Description, H1, FAQ …)
+  edition.mjs             Editionen free/full: Markierungen im Code, Texte je Edition
   layout.mjs              Seitenlayout, Meta-Tags, strukturierte Daten
   partials/editor.html    Editor-Markup (wird in jede Editor-Seite eingebettet)
   pages/*.mjs             Seiten-Generatoren (core, legal, premium, business)
 scripts/
-  build.mjs               Statischer Build nach dist/ (ohne Abhängigkeiten)
+  build.mjs               Statischer Build nach dist/ (ohne Abhängigkeiten, Edition free/full)
+  check-dist.mjs          Prüft dist/ auf tote Links und (bei free) Bezahl-Hinweise
   serve.mjs               Lokaler Webserver
   render-images.mjs       Erzeugt Beispiel- und OG-Bilder mit dem echten Renderer
 supabase/
@@ -73,10 +78,12 @@ supabase/
 Voraussetzung: [Node.js](https://nodejs.org) ab Version 20. Weitere Pakete werden nicht benötigt.
 
 ```bash
-npm run dev          # baut nach dist/ und startet http://localhost:8080
+npm run dev          # kostenlose Edition bauen und http://localhost:8080 starten
+npm run dev:full     # dasselbe mit Premium und Firmen-Paketen
+npm run check        # dist/ prüfen: tote Links, BASE_PATH, bei "free" keine Bezahl-Hinweise
 ```
 
-- Premium testen ohne Kauf: `http://localhost:8080/?premium=dev` (funktioniert nur auf localhost; mit `?premium=off` wieder aus)
+- Premium testen ohne Kauf (nur `dev:full`): `http://localhost:8080/?premium=dev` (funktioniert nur auf localhost; mit `?premium=off` wieder aus)
 - Nach Änderungen an Texten in `src/` oder an `public/`: `npm run build` (bzw. `npm run dev` neu starten)
 - Beispiel- und OG-Bilder neu erzeugen (z. B. nach neuen Vorlagen):
   ```bash
@@ -85,6 +92,25 @@ npm run dev          # baut nach dist/ und startet http://localhost:8080
   ```
 - Tests der Edge Functions (benötigt [Deno](https://deno.com)): `deno test --allow-env supabase/functions/tests/`
 
+## Editionen: free und full
+
+| | `free` (Standard) | `full` |
+|---|---|---|
+| Editor, Vorlagen, PNG-Export 1080 px, Hinweis „Erstellt mit …“, Teilen-Dialog | ✓ | ✓ |
+| Premium (Verläufe, Zusatzschriften, Premium-Vorlagen, Symbole, 2048 px, Upgrade-Dialog) | – | ✓ |
+| Seiten `/premium/`, `/unternehmen/`, `/admin/`, `/team/` | – | ✓ |
+| AGB und Widerruf | – | ✓ |
+| Backend (Supabase, Stripe) | – | ✓ |
+
+**Umschalten:**
+- dauerhaft: `"edition": "free"` bzw. `"full"` in `config/site.json`
+- pro Build: `EDITION=full node scripts/build.mjs` (oder `npm run build:full`). Die Umgebungsvariable gewinnt gegenüber `config/site.json`.
+- GitHub Pages: Repository-Variable `EDITION` auf `full` setzen (ohne Variable wird `free` gebaut)
+
+**Wie es funktioniert:** Der Premium- und Firmen-Code bleibt vollständig im Repo. Teile, die nur zu einer Edition gehören, stehen zwischen Markierungen (`/* @full-start */ … /* @full-end */` in JS/CSS, `<!-- @full-start --> … <!-- @full-end -->` in HTML; Gegenstück `@free-start`/`@free-end`). Der Build entfernt die Blöcke der anderen Edition. Texte der Landingpages können als `{ full: "…", free: "…" }` in `src/content.mjs` stehen (`free: null` = weglassen). Details: `src/edition.mjs`.
+
+In der kostenlosen Edition lädt keine Seite `supabase.js`, es gibt keine Aufrufe an ein Backend und keine Lizenzprüfung; Premium-Vorlagen bekommen weder eine `/vorlage/…`-Seite noch ein Vorschaubild. Die Datenschutzerklärung ist eine eigene, kürzere Fassung (keine Zahlungen, keine Konten, keine Cookies).
+
 ## Konfiguration
 
 `config/site.json` enthält nur **öffentliche** Werte. Jeder Wert lässt sich beim Build auch per Umgebungsvariable setzen, was für Netlify/Vercel praktisch ist:
@@ -92,13 +118,14 @@ npm run dev          # baut nach dist/ und startet http://localhost:8080
 | Variable | Bedeutung |
 |---|---|
 | `SITE_URL` | z. B. `https://www.deine-domain.de` (für Canonical-URLs, Sitemap, OG-Bilder, Teilen-Links) |
+| `EDITION` | `free` (Standard) oder `full`, siehe oben |
 | `APP_NAME` | Name der App (auch im Hinweis „Erstellt mit …“) |
 | `BASE_PATH` | nur bei Hosting in einem Unterordner, z. B. `/repo` |
-| `SUPABASE_URL`, `SUPABASE_ANON_KEY` | Projekt-URL und **Publishable/Anon-Key**, niemals den Service-Role-Key |
+| `SUPABASE_URL`, `SUPABASE_ANON_KEY` | Projekt-URL und **Publishable/Anon-Key**, niemals den Service-Role-Key (nur `full`) |
 | `ANALYTICS_PROVIDER`, `ANALYTICS_SRC`, `ANALYTICS_DOMAIN`, `ANALYTICS_WEBSITE_ID` | cookielose Statistik (siehe unten) |
 | `ADS_ENABLED` | `true` zeigt die vorbereiteten Werbeplätze (vorher Consent-Banner + Datenschutz ergänzen!) |
 
-Ohne Supabase-Werte läuft die Seite vollständig als kostenloser Editor. Kauf, Admin-Bereich und Team-Links zeigen dann einen Hinweis, dass sie noch nicht eingerichtet sind.
+Ohne Supabase-Werte läuft auch die Vollversion als Editor. Kauf, Admin-Bereich und Team-Links zeigen dann einen Hinweis, dass sie noch nicht eingerichtet sind. Für einen Start ganz ohne Backend ist die Edition `free` gedacht.
 
 ## Supabase einrichten
 
@@ -177,8 +204,17 @@ Die UTM-Parameter der Teilen-Links (`utm_source=linkedin|whatsapp|x|link`) zeige
 2. Build-Befehl und Ausgabeordner stehen in `vercel.json`
 3. Umgebungsvariablen wie oben setzen → *Deploy*
 
-### GitHub Pages (Alternative)
-Der Workflow `.github/workflows/pages.yml` baut bei jedem Push auf `main`. Aktivieren unter *Settings → Pages → Source: GitHub Actions*; Variablen unter *Settings → Secrets and variables → Actions → Variables* (`SITE_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, …). Team-Links funktionieren dort über eine Weiterleitung in der `404.html`.
+### GitHub Pages (kostenlose Version ohne Backend)
+Der Workflow `.github/workflows/pages.yml` baut bei jedem Push auf `main`, prüft das Ergebnis mit `scripts/check-dist.mjs` und veröffentlicht es.
+
+1. *Settings → Pages → Source: GitHub Actions*
+2. Fertig – ohne weitere Variablen läuft die **kostenlose Edition** unter `https://<name>.github.io/LinkedIn-Profil/`. Der Unterordner wird automatisch als `BASE_PATH` gesetzt (Links, Bilder, Canonical, OG-Bilder, Sitemap).
+3. Optional unter *Settings → Secrets and variables → Actions → Variables*:
+   - `SITE_URL` mit eigener Domain (z. B. `https://www.deine-domain.de`): dann bleibt `BASE_PATH` leer. Die Domain zusätzlich unter *Settings → Pages → Custom domain* eintragen.
+   - `EDITION=full` plus `SUPABASE_URL`, `SUPABASE_ANON_KEY` für die Vollversion. Team-Links funktionieren dort über eine Weiterleitung in der `404.html`.
+   - Statistik-Variablen (`ANALYTICS_*`). Dann erwähnt die Datenschutzerklärung den Dienst automatisch.
+
+Hinweis: Unter `/<repo>/` liegt die `robots.txt` nicht im Domain-Stamm und wird von Suchmaschinen ignoriert; die Sitemap bei Bedarf direkt in der Search Console einreichen. Mit eigener Domain entfällt das.
 
 ## Eigene Domain
 
@@ -195,10 +231,10 @@ Der Workflow `.github/workflows/pages.yml` baut bei jedem Push auf `main`. Aktiv
 ## Checkliste vor dem Livegang
 
 - [ ] App-Name, Domain und Preise in `config/site.json` angepasst, Bilder neu erzeugt (`npm run images`)
-- [ ] **Impressum, Datenschutzerklärung, AGB, Widerruf**: alle gelb markierten Platzhalter ausgefüllt und rechtlich prüfen lassen (die Texte sind Vorlagen, keine Rechtsberatung)
-- [ ] Umsatzsteuer-Status geklärt (Kleinunternehmer oder Stripe Tax)
-- [ ] Testkauf Premium + Firmen-Paket im Stripe-Testmodus, Erstattung testen, danach Live-Schlüssel eintragen
-- [ ] Magic-Link-Login und Lizenz-E-Mail kommen an (Spam-Ordner prüfen)
+- [ ] **Impressum, Datenschutzerklärung** (bei `full` zusätzlich **AGB, Widerruf**): alle gelb markierten Platzhalter ausgefüllt und rechtlich prüfen lassen (die Texte sind Vorlagen, keine Rechtsberatung)
+- [ ] nur `full`: Umsatzsteuer-Status geklärt (Kleinunternehmer oder Stripe Tax)
+- [ ] nur `full`: Testkauf Premium + Firmen-Paket im Stripe-Testmodus, Erstattung testen, danach Live-Schlüssel eintragen
+- [ ] nur `full`: Magic-Link-Login und Lizenz-E-Mail kommen an (Spam-Ordner prüfen)
 - [ ] Statistik zählt Downloads
 - [ ] Prüfen, dass die Marke/der App-Name keine fremden Markenrechte verletzt
 

@@ -2,10 +2,12 @@
  * Profilbild-Rahmen-Editor – UI-Logik. Fotos werden ausschließlich lokal im Browser verarbeitet.
  *
  * Modi (über <body data-mode="…">):
- *   public – öffentlicher Editor (Premium-Funktionen gesperrt, Hinweis im Bild ohne Premium)
+ *   public – öffentlicher Editor (Zusatzfunktionen nur mit Lizenz, sonst Hinweis im Bild)
  *   admin  – Firmen-Admin gestaltet einen Firmen-Rahmen (alles freigeschaltet, kein Hinweis)
  *   team   – Mitarbeitende nutzen einen Firmen-Rahmen (ggf. gesperrt)
  * Startvorlage über <body data-preset="jobsuche"> oder ?vorlage=jobsuche.
+ * Kostenlose Edition (PBG_CONFIG.edition = "free"): Die Bedienelemente der Zusatzfunktionen fehlen im
+ * Markup (siehe src/edition.mjs), es gibt nur den Modus "public" und keine Backend-Aufrufe.
  */
 (function () {
   "use strict";
@@ -22,6 +24,8 @@
   var mode = body.dataset.mode || "public";
 
   if (!$("editor")) return; // Seite ohne Editor
+  // Farbfelder, die es auf der Seite gibt (die zweite Ringfarbe fehlt in der kostenlosen Edition)
+  var colorKeys = COLOR_KEYS.filter(function (k) { return !!$(k); });
 
   // ---------- Zustand ----------
   var state = Object.assign({}, PBG.DEFAULTS, { zoom: 1, offsetX: 0, offsetY: 0, exportSize: 1080 });
@@ -37,7 +41,7 @@
     preview: $("preview"), stage: $("stage"), mini: $("mini"), miniXs: $("mini-xs"),
     fileInput: $("file-input"), dropzone: $("dropzone"), uploadStatus: $("upload-status"),
     zoom: $("zoom"), resetCrop: $("reset-crop"), removePhoto: $("remove-photo"),
-    presetsFree: $("presets-free"), presetsPremium: $("presets-premium"),
+    presetsFree: $("presets-free"), presetsExtra: $("presets-premium"),
     text: $("text"), font: $("font"), bold: $("bold"), uppercase: $("uppercase"),
     icon: $("icon"), iconPos: $("iconPos"), emojiRow: $("emoji-row"),
     gradient: $("gradient"), ringColor2Field: $("ringColor2-field"),
@@ -91,8 +95,8 @@
     listeners[type].forEach(function (fn) { try { fn(data); } catch (e) { console.error(e); } });
   }
 
-  // ---------- Premium ----------
-  /** Sind Premium-Funktionen nutzbar? Firmen-Rahmen (admin/team) sind immer voll ausgestattet. */
+  // ---------- Zusatzfunktionen (Vollversion) ----------
+  /** Sind die Zusatzfunktionen nutzbar? Firmen-Rahmen (admin/team) sind immer voll ausgestattet. */
   function unlocked() { return mode !== "public" || PBG.premium.active; }
 
   function watermarkText() {
@@ -101,7 +105,7 @@
     return PBG.premium.active ? "" : t("watermark", { app: cfg.appName });
   }
 
-  /** Entfernt Premium-Einstellungen, falls Premium (nicht mehr) aktiv ist. */
+  /** Entfernt Zusatz-Einstellungen, falls sie nicht (mehr) freigeschaltet sind. */
   function sanitizeForFree() {
     if (unlocked()) return;
     state.gradient = false;
@@ -111,7 +115,7 @@
     if (activePreset && PBG.presetByKey(activePreset) && PBG.presetByKey(activePreset).premium) activePreset = null;
   }
 
-  function updatePremiumUI() {
+  function updateLockUI() {
     document.documentElement.classList.toggle("premium-active", unlocked());
     buildFontOptions();
     buildIconOptions();
@@ -179,7 +183,7 @@
 
     window.addEventListener("pbg:premium", function () {
       sanitizeForFree();
-      updatePremiumUI();
+      updateLockUI();
       syncControls();
       requestRender();
     });
@@ -246,7 +250,7 @@
     var msgs = [];
     if (lastInfo.overflow) msgs.push(t("text.tooLong"));
     else if (lastInfo.scale < 0.995) msgs.push(t("text.shrunk", { percent: Math.round(lastInfo.scale * 100) }));
-    if (!unlocked() && PBG.text.hasEmoji(state.text)) msgs.push(t("text.emojiPremium"));
+    if (!unlocked() && PBG.text.hasEmoji(state.text)) msgs.push(t("text.emojiOmitted"));
     els.textWarning.textContent = msgs.join(" ");
     els.textWarning.hidden = !msgs.length;
 
@@ -264,7 +268,7 @@
     PBG.FONTS.forEach(function (f) {
       var o = document.createElement("option");
       o.value = f.id;
-      o.textContent = f.label + (f.premium && !unlocked() ? "  🔒 PRO" : f.premium ? "  ★" : "");
+      o.textContent = f.label + (f.premium && !unlocked() ? t("premium.lockSuffix") : f.premium ? "  ★" : "");
       els.font.appendChild(o);
     });
     els.font.value = current;
@@ -281,7 +285,7 @@
     PBG.ICONS.forEach(function (ic) {
       var o = document.createElement("option");
       o.value = ic.id;
-      o.textContent = PBG.loc(ic.label) + (unlocked() ? "" : "  🔒 PRO");
+      o.textContent = PBG.loc(ic.label) + (unlocked() ? "" : t("premium.lockSuffix"));
       els.icon.appendChild(o);
     });
     els.icon.value = current;
@@ -319,14 +323,13 @@
     els.bold.checked = state.bold;
     els.bold.disabled = PBG.fontById(state.font).weights.indexOf(700) < 0;
     els.uppercase.checked = state.uppercase;
-    els.gradient.checked = state.gradient;
-    els.ringColor2Field.hidden = !state.gradient;
+    if (els.gradient) { els.gradient.checked = state.gradient; els.ringColor2Field.hidden = !state.gradient; }
     if (els.icon) { els.icon.value = state.icon; els.iconPos.value = state.iconPos; els.iconPos.disabled = !state.icon; }
     RANGE_KEYS.forEach(function (k) {
       $(k).value = state[k];
       updateOutput(k);
     });
-    COLOR_KEYS.forEach(function (k) {
+    colorKeys.forEach(function (k) {
       $(k).value = state[k];
       $(k + "-hex").value = state[k].toUpperCase();
       $(k + "-hex").removeAttribute("aria-invalid");
@@ -373,16 +376,18 @@
       els[k].addEventListener("change", function () { state[k] = els[k].checked; changed(); });
     });
 
-    els.gradient.addEventListener("change", function () {
-      if (els.gradient.checked && !unlocked()) {
-        els.gradient.checked = false;
-        openUpgrade("gradient");
-        return;
-      }
-      state.gradient = els.gradient.checked;
-      els.ringColor2Field.hidden = !state.gradient;
-      changed();
-    });
+    if (els.gradient) {
+      els.gradient.addEventListener("change", function () {
+        if (els.gradient.checked && !unlocked()) {
+          els.gradient.checked = false;
+          openUpgrade("gradient");
+          return;
+        }
+        state.gradient = els.gradient.checked;
+        els.ringColor2Field.hidden = !state.gradient;
+        changed();
+      });
+    }
 
     if (els.icon) {
       els.icon.addEventListener("change", function () {
@@ -406,7 +411,7 @@
       });
     });
 
-    COLOR_KEYS.forEach(function (k) {
+    colorKeys.forEach(function (k) {
       var picker = $(k), hex = $(k + "-hex");
       picker.addEventListener("input", function () {
         state[k] = picker.value.toLowerCase();
@@ -472,7 +477,7 @@
   function buildPresets() {
     if (!els.presetsFree) return;
     els.presetsFree.innerHTML = "";
-    els.presetsPremium.innerHTML = "";
+    if (els.presetsExtra) els.presetsExtra.innerHTML = "";
     PBG.PRESETS.forEach(function (p) {
       var btn = document.createElement("button");
       btn.type = "button";
@@ -502,17 +507,17 @@
         applyPreset(p);
         PBG.track("Vorlage gewählt", { vorlage: p.key });
       });
-      (p.premium ? els.presetsPremium : els.presetsFree).appendChild(btn);
+      (p.premium ? els.presetsExtra : els.presetsFree).appendChild(btn);
     });
     var more = $("more-presets");
     if (more) {
-      var count = els.presetsPremium.children.length;
+      var count = els.presetsExtra.children.length;
       var setLabel = function () {
-        var open = !els.presetsPremium.classList.contains("collapsed");
+        var open = !els.presetsExtra.classList.contains("collapsed");
         more.textContent = open ? t("presets.less") : t("presets.more", { count: count });
         more.setAttribute("aria-expanded", String(open));
       };
-      more.onclick = function () { els.presetsPremium.classList.toggle("collapsed"); setLabel(); };
+      more.onclick = function () { els.presetsExtra.classList.toggle("collapsed"); setLabel(); };
       more.hidden = count <= 8;
       setLabel();
     }
@@ -993,7 +998,7 @@
     var key = params.get("vorlage") || body.dataset.preset || "jobsuche";
     var p = PBG.presetByKey(key) || PBG.PRESETS[0];
     if (p.premium && !unlocked()) {
-      // Premium-Vorlage über Link geöffnet: Vorschau-Hinweis statt stiller Änderung
+      // Gesperrte Vorlage über Link geöffnet: Hinweis statt stiller Änderung
       setTimeout(function () { openUpgrade("preset", { name: PBG.loc(p.name) }); }, 400);
       p = PBG.PRESETS[0];
     }
@@ -1022,7 +1027,7 @@
       if (presetsPanel) presetsPanel.hidden = true;
       syncControls();
     }
-    updatePremiumUI();
+    updateLockUI();
 
     // Neu zeichnen, wenn sich Größe oder Pixeldichte ändern
     if (window.ResizeObserver) new ResizeObserver(requestRender).observe(els.preview);

@@ -1,5 +1,6 @@
 /*
- * Plattform-Dienste: Konfiguration, cookielose Statistik, Backend-Aufrufe, Premium-Status.
+ * Plattform-Dienste: Konfiguration, cookielose Statistik, Backend-Aufrufe, Lizenzstatus.
+ * In der kostenlosen Edition (edition "free") gibt es weder Backend noch Lizenzprüfung.
  * Fotos werden hier NIE verarbeitet oder versendet.
  */
 window.PBG = window.PBG || {};
@@ -28,6 +29,9 @@ window.PBG = window.PBG || {};
     } catch (e) { /* Statistik darf nie die App stören */ }
   };
 
+  PBG.edition = cfg.edition || "free";
+
+  /* @full-start */
   // ---------- Backend (Supabase Edge Functions) ----------
   var sb = cfg.supabase || {};
   PBG.api = {
@@ -169,6 +173,12 @@ window.PBG = window.PBG || {};
 
   PBG.premium = premium;
   premium.init();
+  /* @full-end */
+  /* @free-start */
+  // Kostenlose Edition: kein Backend, keine Lizenz – alle Zusatzfunktionen sind ausgeblendet.
+  PBG.api = { enabled: false };
+  PBG.premium = { active: false };
+  /* @free-end */
 
   // ---------- Farbschema-Schalter (alle Seiten) ----------
   function bindThemeSwitch() {

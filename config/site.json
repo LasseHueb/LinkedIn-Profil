@@ -1,5 +1,7 @@
 {
   "_hinweis": "Zentrale Einstellungen. Werte mit Umgebungsvariablen überschreibbar (siehe README). Nur öffentliche Werte eintragen – niemals geheime Schlüssel!",
+  "edition": "free",
+  "_hinweis_edition": "\"free\" = nur kostenloser Editor ohne Backend (Premium/Firmen-Pakete ausgeblendet), \"full\" = alles. Per Umgebungsvariable EDITION überschreibbar.",
   "appName": "ProfilRing",
   "siteUrl": "https://www.profilring.de",
   "basePath": "",
