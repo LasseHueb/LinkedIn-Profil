@@ -36,9 +36,11 @@ PBG.I18N = {
 
     "presets.heading": "2. Vorlage",
     "presets.hint": "Startpunkt wählen – danach alles frei anpassbar.",
+    /* @full-start */
     "presets.free": "Kostenlos",
     "presets.premium": "Premium-Vorlagen",
     "presets.more": "Alle {count} Premium-Vorlagen anzeigen",
+    /* @full-end */
     "presets.less": "Weniger anzeigen",
 
     "text.heading": "3. Text",
@@ -54,7 +56,12 @@ PBG.I18N = {
     "text.shrunk": "Der Text ist lang und wurde automatisch auf {percent} % verkleinert.",
     "text.tooLong": "Der Text ist zu lang für den Ring. Kürze ihn oder verlängere den Ring.",
     "text.lowContrast": "Geringer Kontrast zwischen Text und Ring ({ratio}:1) – der Text könnte schwer lesbar sein.",
-    "text.emojiPremium": "Emojis im Ring sind eine Premium-Funktion – sie werden im Bild weggelassen.",
+    /* @full-start */
+    "text.emojiOmitted": "Emojis im Ring sind eine Premium-Funktion – sie werden im Bild weggelassen.",
+    /* @full-end */
+    /* @free-start */
+    "text.emojiOmitted": "Emojis werden im Bild weggelassen.",
+    /* @free-end */
 
     "icon.label": "Symbol im Ring",
     "icon.none": "Kein Symbol",
@@ -82,14 +89,21 @@ PBG.I18N = {
     "export.download": "PNG herunterladen · {size} px",
     "export.share": "Bild teilen",
     "export.info": "Tipp: Die meisten Netzwerke schneiden Profilbilder automatisch rund zu.",
+    /* @full-start */
     "export.watermarkNote": "Kostenlose Bilder enthalten unten einen kleinen Hinweis „{watermark}“.",
     "export.watermarkUpgrade": "Ohne Hinweis mit Premium",
+    /* @full-end */
+    /* @free-start */
+    "export.watermarkNote": "Die Bilder enthalten unten einen kleinen Hinweis „{watermark}“.",
+    /* @free-end */
     "export.done": "Bild wurde erstellt.",
     "export.shareError": "Teilen ist fehlgeschlagen. Nutze stattdessen „Herunterladen“.",
     "export.filename": "profilbild-rahmen.png",
 
     "watermark": "Erstellt mit {app}",
 
+    /* @full-start */
+    "premium.lockSuffix": "  🔒 PRO",
     "premium.badge": "Premium",
     "premium.locked": "Premium-Funktion – zum Freischalten klicken",
     "premium.active": "Premium aktiv",
@@ -119,6 +133,7 @@ PBG.I18N = {
     "upgrade.unavailable": "Der Kauf ist gerade nicht möglich. Bitte versuche es später erneut.",
     "upgrade.redirecting": "Weiterleitung zu Stripe …",
     "upgrade.more": "Alle Details zu Premium",
+    /* @full-end */
 
     "share.title": "Gefällt dir dein Rahmen?",
     "share.lead": "Teile die App mit deinem Netzwerk – das hilft uns sehr, kostenlos zu bleiben.",
@@ -166,9 +181,11 @@ PBG.I18N = {
 
     "presets.heading": "2. Template",
     "presets.hint": "Pick a starting point – everything can be customised afterwards.",
+    /* @full-start */
     "presets.free": "Free",
     "presets.premium": "Premium templates",
     "presets.more": "Show all {count} premium templates",
+    /* @full-end */
     "presets.less": "Show less",
 
     "text.heading": "3. Text",
@@ -184,7 +201,12 @@ PBG.I18N = {
     "text.shrunk": "The text is long and was automatically reduced to {percent} %.",
     "text.tooLong": "The text is too long for the ring. Shorten it or make the ring longer.",
     "text.lowContrast": "Low contrast between text and ring ({ratio}:1) – the text may be hard to read.",
-    "text.emojiPremium": "Emojis on the ring are a premium feature – they are left out of the image.",
+    /* @full-start */
+    "text.emojiOmitted": "Emojis on the ring are a premium feature – they are left out of the image.",
+    /* @full-end */
+    /* @free-start */
+    "text.emojiOmitted": "Emojis are left out of the image.",
+    /* @free-end */
 
     "icon.label": "Symbol on the ring",
     "icon.none": "No symbol",
@@ -212,14 +234,21 @@ PBG.I18N = {
     "export.download": "Download PNG · {size} px",
     "export.share": "Share image",
     "export.info": "Tip: most networks crop profile pictures to a circle automatically.",
+    /* @full-start */
     "export.watermarkNote": "Free images contain a small “{watermark}” note at the bottom.",
     "export.watermarkUpgrade": "Remove it with Premium",
+    /* @full-end */
+    /* @free-start */
+    "export.watermarkNote": "Images contain a small “{watermark}” note at the bottom.",
+    /* @free-end */
     "export.done": "Image created.",
     "export.shareError": "Sharing failed. Please use “Download” instead.",
     "export.filename": "profile-frame.png",
 
     "watermark": "Made with {app}",
 
+    /* @full-start */
+    "premium.lockSuffix": "  🔒 PRO",
     "premium.badge": "Premium",
     "premium.locked": "Premium feature – click to unlock",
     "premium.active": "Premium active",
@@ -249,6 +278,7 @@ PBG.I18N = {
     "upgrade.unavailable": "Purchasing is currently unavailable. Please try again later.",
     "upgrade.redirecting": "Redirecting to Stripe …",
     "upgrade.more": "All Premium details",
+    /* @full-end */
 
     "share.title": "Like your frame?",
     "share.lead": "Share the app with your network – it really helps us stay free.",

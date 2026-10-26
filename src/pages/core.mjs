@@ -1,5 +1,4 @@
 /* Startseite, Landingpages (SEO) und Vorlagen-Links (/vorlage/<key>/). */
-import { home, landingPages } from "../content.mjs";
 import { esc, fill, editor, page, privacyNote, trustRow, faqSection, faqJsonLd, webAppJsonLd, breadcrumbJsonLd } from "../layout.mjs";
 
 function examplesSection(ctx, keys, heading) {
@@ -50,6 +49,7 @@ const adSlot = '<aside class="ad-slot" aria-label="Anzeige" data-ad-slot="conten
 
 export default function pages(ctx) {
   const out = [];
+  const home = ctx.home, landingPages = ctx.landing;
 
   // ---------- Startseite ----------
   out.push({

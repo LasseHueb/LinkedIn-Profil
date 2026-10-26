@@ -3,7 +3,7 @@ window.PBG = window.PBG || {};
 /**
  * Schriftarten (lokal in /fonts, siehe css/fonts.css).
  * weights: verfügbare Schriftschnitte – Schriften ohne 700 ignorieren "Fett".
- * premium: nur mit Premium wählbar.
+ * premium: nur in der Vollversion (edition "full") und mit Lizenz wählbar.
  */
 PBG.FONTS = [
   { id: "Montserrat", label: "Montserrat", weights: [400, 700] },
@@ -12,11 +12,13 @@ PBG.FONTS = [
   { id: "Raleway", label: "Raleway", weights: [400, 700] },
   { id: "Nunito", label: "Nunito (rund)", weights: [400, 700] },
   { id: "Roboto Slab", label: "Roboto Slab (Serife)", weights: [400, 700] },
+  /* @full-start */
   { id: "Playfair Display", label: "Playfair Display (elegant)", weights: [400, 700], premium: true },
   { id: "Space Grotesk", label: "Space Grotesk (Tech)", weights: [400, 700], premium: true },
   { id: "Caveat", label: "Caveat (Handschrift)", weights: [400, 700], premium: true },
   { id: "Bebas Neue", label: "Bebas Neue (Plakat)", weights: [400], premium: true },
   { id: "Archivo Black", label: "Archivo Black (kräftig)", weights: [400], premium: true }
+  /* @full-end */
 ];
 
 PBG.fontById = function (id) {
@@ -36,13 +38,13 @@ PBG.DEFAULTS = {
   textColor: "#ffffff",
   ringColor: "#2e7d32",
   ringColor2: "#81c784",
-  gradient: false,   // Premium
+  gradient: false,   // nur Vollversion
   ringWidth: 17,     // in % des Radius
   ringLength: 250,   // Bogenlänge in Grad (180 = Halbkreis, 350 = fast voll)
   ringRotation: 35,  // Drehung des Bogens in Grad (0 = mittig unten, positiv = nach links)
   fade: 30,          // Länge des weichen Übergangs an den Enden in Grad
   opacity: 100,      // Deckkraft des Rings in %
-  icon: "",          // Premium: Symbol-ID aus PBG.ICONS
+  icon: "",          // nur Vollversion: Symbol-ID aus PBG.ICONS
   iconPos: "start",  // start | end | both
   logoPos: "end",    // Firmen-Logo: start | end
   bg: "transparent"
@@ -54,7 +56,8 @@ PBG.DESIGN_KEYS = ["text", "font", "size", "bold", "uppercase", "spacing", "text
 
 /**
  * Vorlagen. key = URL-Slug (/vorlage/<key>/). name/text je Sprache.
- * Kostenlose Vorlagen bewusst ohne Premium-Funktionen (kein Verlauf, Standardschriften, keine Symbole).
+ * Kostenlose Vorlagen bewusst ohne Zusatzfunktionen (kein Verlauf, Standardschriften, keine Symbole).
+ * Die übrigen Vorlagen gibt es nur in der Vollversion (edition "full").
  * Keine Logos, Markennamen oder Original-Farbtöne fremder Plattformen.
  */
 PBG.PRESETS = [
@@ -77,6 +80,7 @@ PBG.PRESETS = [
     values: { ringColor: "#1a237e", textColor: "#ffd54f", font: "Roboto Slab", ringRotation: 0, ringLength: 270 } },
   { key: "ehrenamt", name: { de: "Ehrenamt", en: "Volunteering" }, text: { de: "#EHRENAMT", en: "#VOLUNTEERING" },
     values: { ringColor: "#ad1457", font: "Poppins", ringRotation: 35, ringLength: 240 } },
+  /* @full-start */
 
   // ---------- Premium ----------
   { key: "jobsuche-sonnenuntergang", premium: true, name: { de: "Jobsuche Sunset", en: "Job search sunset" }, text: { de: "#OFFENFÜRJOBS", en: "#OPENFORWORK" },
@@ -125,6 +129,7 @@ PBG.PRESETS = [
     values: { gradient: true, ringColor: "#004d40", ringColor2: "#1565c0", font: "Raleway", uppercase: false, icon: "calendar", iconPos: "start", ringLength: 280 } },
   { key: "ruhestand", premium: true, name: { de: "Ruhestand", en: "Retired" }, text: { de: "Im Ruhestand", en: "Retired" },
     values: { gradient: true, ringColor: "#5d4037", ringColor2: "#a1887f", font: "Playfair Display", uppercase: false, icon: "leaf", iconPos: "end" } }
+  /* @full-end */
 ];
 
 PBG.presetByKey = function (key) {

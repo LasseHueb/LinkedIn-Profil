@@ -1,7 +1,8 @@
 name: GitHub Pages
 
 # Alternative zu Netlify/Vercel. Hinweis: Auf GitHub Pages ohne eigene Domain läuft die Seite
-# unter /<repo>/ – dafür setzt der Build BASE_PATH. Mit eigener Domain BASE_PATH leer lassen.
+# unter /<repo>/ – dafür setzt der Build BASE_PATH. Mit eigener Domain (Variable SITE_URL) bleibt BASE_PATH leer.
+# Edition: standardmäßig "free" (ohne Backend). Für Premium/Firmen-Pakete die Variable EDITION=full setzen.
 on:
   push:
     branches: [main]
@@ -32,14 +33,19 @@ jobs:
       - name: Build
         run: node scripts/build.mjs
         env:
+          EDITION: ${{ vars.EDITION || 'free' }}
           SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.origin }}
-          BASE_PATH: ${{ vars.SITE_URL && '' || steps.pages.outputs.base_path }}
-          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          # Leerer String ist in Expressions „falsy“, daher nicht `vars.SITE_URL && '' || …` schreiben
+          BASE_PATH: ${{ !vars.SITE_URL && steps.pages.outputs.base_path || '' }}
+          # Backend nur in der Vollversion; die kostenlose Edition baut immer mit leerem Supabase
+          SUPABASE_URL: ${{ vars.EDITION == 'full' && vars.SUPABASE_URL || '' }}
+          SUPABASE_ANON_KEY: ${{ vars.EDITION == 'full' && vars.SUPABASE_ANON_KEY || '' }}
           ANALYTICS_PROVIDER: ${{ vars.ANALYTICS_PROVIDER }}
           ANALYTICS_SRC: ${{ vars.ANALYTICS_SRC }}
           ANALYTICS_DOMAIN: ${{ vars.ANALYTICS_DOMAIN }}
           ANALYTICS_WEBSITE_ID: ${{ vars.ANALYTICS_WEBSITE_ID }}
+      - name: Build prüfen (tote Links, BASE_PATH, Free-Edition ohne Bezahl-Hinweise)
+        run: node scripts/check-dist.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -407,7 +407,7 @@ input[type="color"]::-moz-color-swatch { border: none; border-radius: 6px; }
 }
 
 /* =====================================================================
-   Erweiterungen: Seitenrahmen, Landingpages, Premium, Dialoge, B2B
+   Erweiterungen: Seitenrahmen, Landingpages, Zusatzfunktionen, Dialoge, B2B
    ===================================================================== */
 
 a { color: var(--accent); }
@@ -484,7 +484,7 @@ textarea { width: 100%; min-height: 120px; padding: 10px 12px; font: inherit; co
 input[type="email"], input[type="url"] { width: 100%; min-height: 44px; padding: 8px 12px; font: inherit; color: var(--text); background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; }
 .hp-field { position: absolute !important; left: -9999px !important; }
 
-/* Premium-Kennzeichnung */
+/* Kennzeichnung der Zusatzfunktionen (Vollversion) */
 .pro-badge {
   display: inline-block; vertical-align: middle;
   font: 800 .62rem/1 "Montserrat", system-ui, sans-serif; letter-spacing: .06em;

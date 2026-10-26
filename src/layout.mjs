@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { stripEdition } from "./edition.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const editorHtml = readFileSync(join(here, "partials/editor.html"), "utf8");
@@ -25,7 +26,7 @@ export function fill(ctx, s) {
 }
 
 export function editor(ctx) {
-  return editorHtml.replaceAll("{{base}}", ctx.cfg.basePath);
+  return stripEdition(editorHtml, ctx.edition, "editor.html").replaceAll("{{base}}", ctx.cfg.basePath);
 }
 
 const ICON_SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3z" fill="currentColor"/></svg>';
@@ -77,7 +78,7 @@ export function webAppJsonLd(ctx, url) {
     isAccessibleForFree: true,
     offers: [
       { "@type": "Offer", name: "Kostenlos", price: "0", priceCurrency: c.premium.currency },
-      { "@type": "Offer", name: "Premium (einmalig)", price: String(c.premium.priceValue), priceCurrency: c.premium.currency }
+      ...(ctx.full ? [{ "@type": "Offer", name: "Premium (einmalig)", price: String(c.premium.priceValue), priceCurrency: c.premium.currency }] : [])
     ],
     featureList: ["Eigener Text auf dem Profilbild-Ring", "Farben und Schriftarten frei wählbar", "PNG-Export 1080 × 1080 px", "Fotos bleiben im Browser"]
   };
@@ -134,7 +135,7 @@ function footer(ctx) {
     ...(ctx.hasPage("/premium/") ? [["/premium/", "Premium"]] : []),
     ...(ctx.hasPage("/unternehmen/") ? [["/unternehmen/", "Für Unternehmen"]] : []),
     ["/impressum/", "Impressum"], ["/datenschutz/", "Datenschutz"], ["/agb/", "AGB"], ["/widerruf/", "Widerruf"]
-  ];
+  ].filter(([p]) => ctx.hasPage(p));
   return `<footer class="site-footer">
     <ul class="footer-nav" aria-label="Anwendungsfälle">${links.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
     <ul class="footer-nav" aria-label="Rechtliches">${legal.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
