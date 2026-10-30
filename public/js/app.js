@@ -869,7 +869,8 @@
     return !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
   }
 
-  // ---------- Teilen-Dialog (virale Verbreitung) ----------
+  // ---------- Teilen-Dialog (virale Verbreitung): „Link kopieren“ und Teilen-Funktion des Geräts ----------
+  /** channel: "link" (Link kopieren) oder "native" (Web Share API) – landet als utm_source in der Statistik. */
   function appShareUrl(channel) {
     var p = activePreset && PBG.presetByKey(activePreset);
     var path = mode === "public" && p && !p.premium ? "/vorlage/" + p.key + "/" : "/";
@@ -886,22 +887,9 @@
   function bindShareDialog() {
     if (!els.shareDialog) return;
     var text = function () { return t("share.text", { app: cfg.appName }); };
-    function setLinks() {
-      $("share-linkedin").href = "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(appShareUrl("linkedin"));
-      $("share-whatsapp").href = "https://wa.me/?text=" + encodeURIComponent(text() + " " + appShareUrl("whatsapp"));
-      $("share-x").href = "https://x.com/intent/post?text=" + encodeURIComponent(text()) + "&url=" + encodeURIComponent(appShareUrl("x"));
-    }
     els.shareDialog.addEventListener("click", function (e) {
       // Klick auf den Hintergrund schließt den Dialog
       if (e.target === els.shareDialog) closeDialog(els.shareDialog);
-    });
-    // Links vor dem Öffnen aktualisieren (Vorlage kann sich geändert haben)
-    var origShow = els.shareDialog.showModal;
-    if (origShow) els.shareDialog.showModal = function () { setLinks(); return origShow.call(els.shareDialog); };
-    setLinks();
-
-    ["linkedin", "whatsapp", "x"].forEach(function (ch) {
-      $("share-" + ch).addEventListener("click", function () { PBG.track("App geteilt", { kanal: ch }); });
     });
 
     $("share-copy").addEventListener("click", function () {
