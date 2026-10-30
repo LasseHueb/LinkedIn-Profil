@@ -24,7 +24,6 @@ const set = (obj, key, val) => { if (val !== undefined && val !== "") obj[key] =
 set(cfg, "appName", env.APP_NAME);
 set(cfg, "siteUrl", env.SITE_URL);
 set(cfg, "basePath", env.BASE_PATH);
-if (env.ADS_ENABLED) cfg.ads.enabled = env.ADS_ENABLED === "true";
 cfg.siteUrl = cfg.siteUrl.replace(/\/+$/, "");
 cfg.basePath = (cfg.basePath || "").replace(/\/+$/, "");
 

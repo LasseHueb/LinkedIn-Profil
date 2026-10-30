@@ -498,10 +498,6 @@ a:hover { color: var(--accent-hover); }
 .share-btn:hover { border-color: var(--accent); color: var(--text); }
 .dont-show { display: inline-flex; gap: 8px; align-items: center; margin-top: 6px; }
 
-/* Werbeplatz (vorbereitet, standardmäßig aus) */
-.ad-slot { display: none; }
-.ads-enabled .ad-slot { display: block; min-height: 120px; margin: 16px auto; max-width: 970px; border: 1px dashed var(--border); border-radius: 12px; }
-
 /* Fußzeile */
 .site-footer { border-top: 1px solid var(--border); margin-top: 24px; padding: 24px 16px 40px; }
 .footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; margin: 0 0 10px; padding: 0; list-style: none; }

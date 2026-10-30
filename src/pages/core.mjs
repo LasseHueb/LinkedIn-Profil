@@ -45,8 +45,6 @@ function relatedLinks(ctx, currentSlug) {
   </section>`;
 }
 
-const adSlot = '<aside class="ad-slot" aria-label="Anzeige" data-ad-slot="content"></aside>';
-
 export default function pages(ctx) {
   const out = [];
   const home = ctx.home, landingPages = ctx.landing;
@@ -72,7 +70,6 @@ export default function pages(ctx) {
   </div>
   ${privacyNote()}
   ${editor(ctx)}
-  ${adSlot}
   ${examplesSection(ctx, home.examples, "Vorlagen zum Loslegen")}
   ${howTo()}
   ${introSection(ctx, home.intro, "Dein Rahmen, deine Botschaft")}
@@ -107,7 +104,6 @@ export default function pages(ctx) {
   </div>
   ${privacyNote()}
   ${editor(ctx)}
-  ${adSlot}
   ${introSection(ctx, l.intro, "Worauf es ankommt")}
   ${examplesSection(ctx, l.examples, "Beispiele")}
   ${howTo()}

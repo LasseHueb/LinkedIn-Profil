@@ -157,7 +157,7 @@ export function page(ctx, opts) {
   const ver = ctx.version;
 
   return `<!doctype html>
-<html lang="de"${c.ads.enabled ? ' class="ads-enabled"' : ""}>
+<html lang="de">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
