@@ -25,6 +25,14 @@ export function fill(ctx, s) {
     .replaceAll("{base}", ctx.cfg.basePath);
 }
 
+/**
+ * Unabhängigkeitshinweis – die einzige Stelle, an der ein soziales Netzwerk namentlich genannt wird (Footer und Impressum).
+ * scripts/check-dist.mjs lässt nur Zeilen mit „in keiner Verbindung zu“ durch.
+ */
+export function independenceNote(ctx) {
+  return `${esc(ctx.cfg.appName)} ist ein unabhängiges Angebot und steht in keiner Verbindung zu LinkedIn, Xing oder anderen sozialen Netzwerken. Alle genannten Marken gehören ihren jeweiligen Inhabern.`;
+}
+
 export function editor(ctx) {
   return stripEdition(editorHtml, ctx.edition, "editor.html").replaceAll("{{base}}", ctx.cfg.basePath);
 }
@@ -140,7 +148,7 @@ function footer(ctx) {
     <ul class="footer-nav" aria-label="Anwendungsfälle">${links.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
     <ul class="footer-nav" aria-label="Rechtliches">${legal.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
     <p>Deine Fotos verlassen nie deinen Browser · Keine Cookies · © ${new Date().getFullYear()} ${esc(ctx.cfg.appName)}</p>
-    <p class="small">${esc(ctx.cfg.appName)} ist ein unabhängiges Angebot und steht in keiner Verbindung zu LinkedIn, Xing oder anderen Netzwerken.</p>
+    <p class="small">${independenceNote(ctx)}</p>
   </footer>`;
 }
 

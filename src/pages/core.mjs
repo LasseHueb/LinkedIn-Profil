@@ -75,7 +75,7 @@ export default function pages(ctx) {
   ${adSlot}
   ${examplesSection(ctx, home.examples, "Vorlagen zum Loslegen")}
   ${howTo()}
-  ${introSection(ctx, home.intro, "Dein Profilbild-Rahmen – nicht nur „Open to Work“")}
+  ${introSection(ctx, home.intro, "Dein Rahmen, deine Botschaft")}
   ${faqSection(ctx, home.faq)}
   ${relatedLinks(ctx, null)}`
     })

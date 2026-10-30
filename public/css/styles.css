@@ -533,7 +533,7 @@ input[type="email"], input[type="url"] { width: 100%; min-height: 44px; padding:
 .inline-form input { flex: 1; min-width: 0; }
 .inline-form input[type="text"] { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
 
-.share-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0 8px; }
+.share-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 14px 0 8px; }
 .share-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 48px; padding: 0 12px; border-radius: 12px;
@@ -541,10 +541,6 @@ input[type="email"], input[type="url"] { width: 100%; min-height: 44px; padding:
   font: inherit; font-weight: 800; text-decoration: none; cursor: pointer;
 }
 .share-btn:hover { border-color: var(--accent); color: var(--text); }
-.share-linkedin { background: #0a66c2; border-color: #0a66c2; color: #fff; }
-.share-whatsapp { background: #1f8f4e; border-color: #1f8f4e; color: #fff; }
-.share-x { background: #111; border-color: #111; color: #fff; }
-.share-linkedin:hover, .share-whatsapp:hover, .share-x:hover { color: #fff; filter: brightness(1.1); }
 .dont-show { display: inline-flex; gap: 8px; align-items: center; margin-top: 6px; }
 
 /* Werbeplatz (vorbereitet, standardmäßig aus) */

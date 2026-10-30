@@ -10,14 +10,14 @@
 export const home = {
   path: "/",
   preset: "jobsuche",
-  title: "LinkedIn-Rahmen erstellen – kostenlos & mit eigenem Text",
-  description: "Profilbild-Rahmen wie „Open to Work“ oder „Hiring“ – aber mit eigenem Text und eigenen Farben. Kostenlos, ohne Anmeldung, dein Foto bleibt im Browser.",
-  h1: "LinkedIn-Rahmen erstellen – mit eigenem Text",
-  lead: "Gestalte in einer Minute einen runden Profilbild-Rahmen wie „Open to Work“ oder „Hiring“ – mit deinem eigenen Text, deinen Farben und deiner Schrift. Kostenlos und ohne Anmeldung.",
+  title: "Profilbild-Rahmen mit eigenem Text erstellen – kostenlos",
+  description: "Runder Profilbild-Rahmen mit deinem eigenen Text, deinen Farben und deiner Schrift. Kostenlos, ohne Anmeldung, dein Foto bleibt im Browser.",
+  h1: "Profilbild-Rahmen mit eigenem Text",
+  lead: "Gestalte in einer Minute einen runden Rahmen für dein Profilbild – mit deinem eigenen Text, deinen Farben und deiner Schrift. Kostenlos und ohne Anmeldung.",
   examples: ["jobsuche", "recruiting", "freelancer", "projekte", "selbststaendig", "mentoring", "ehrenamt", "ausbildung"],
   intro: [
-    "Die bekannten Rahmen der Karriere-Netzwerke kennen nur wenige feste Texte. Mit {app} schreibst du, was du willst: <strong>#OFFENFÜRJOBS</strong>, <strong>#WIRSTELLENEIN</strong>, „Verfügbar ab Mai“ oder deinen Jobtitel. Der Text läuft gebogen am unteren Rand deines Profilbilds entlang – genau wie beim Original.",
-    "Das fertige Bild lädst du als PNG in 1080 × 1080 Pixeln herunter und nutzt es als Profilbild auf LinkedIn, Xing, Instagram, WhatsApp, Slack oder Teams."
+    "Mit {app} schreibst du auf den Rahmen, was du sagen möchtest: <strong>„Bereit für Neues“</strong>, <strong>„Wir suchen dich“</strong>, „Verfügbar ab Mai“ oder deinen Jobtitel. Der Text läuft gebogen am Rand deines Profilbilds entlang, Farben, Schrift und Position wählst du selbst.",
+    "Das fertige Bild lädst du als PNG in 1080 × 1080 Pixeln herunter und nutzt es als Profilbild in sozialen Netzwerken, Messengern und Team-Tools."
   ],
   faq: [
     ["Ist der Profilbild-Rahmen wirklich kostenlos?", {
@@ -25,9 +25,9 @@ export const home = {
       free: "Ja. Du kannst unbegrenzt Rahmen gestalten und herunterladen – ohne Anmeldung, ohne Abo und ohne versteckte Kosten. Die Bilder enthalten unten einen kleinen Hinweis „Erstellt mit {app}“."
     }],
     ["Wird mein Foto hochgeladen?", "Nein. Dein Foto verlässt nie deinen Browser. Das Bild wird direkt auf deinem Gerät berechnet – es gibt keinen Upload, keine Speicherung und kein Konto."],
-    ["Wie lade ich den Rahmen auf LinkedIn hoch?", "Lade das PNG herunter, öffne dein LinkedIn-Profil, tippe auf dein Profilbild und wähle „Foto ändern“ bzw. „Hochladen“. LinkedIn schneidet das Bild automatisch rund zu – der Rahmen sitzt dann genau am Rand."],
+    ["Wie nutze ich das Bild als Profilbild?", "Lade das PNG herunter und lade es in deinem Netzwerk oder Messenger als neues Profilbild hoch. Die meisten Plattformen schneiden das Bild automatisch rund zu – der Rahmen sitzt dann genau am Rand."],
     ["Kann ich den Text frei wählen?", "Ja, bis zu 60 Zeichen. Schriftart, Größe, Abstand, Position und Farben sind frei einstellbar. Ist der Text zu lang, wird er automatisch verkleinert und du bekommst einen Hinweis."],
-    ["Ist das der offizielle „Open to Work“-Rahmen?", "Nein. {app} ist ein unabhängiges Werkzeug und steht in keiner Verbindung zu LinkedIn, Xing oder anderen Netzwerken. Den offiziellen Rahmen aktivierst du direkt in deinem Netzwerk – unser Rahmen ist eine frei gestaltbare Alternative."],
+    ["Gehört {app} zu einem sozialen Netzwerk?", "Nein, {app} ist ein unabhängiges Werkzeug."],
     ["Funktioniert das auch auf dem Handy?", "Ja. Der Editor läuft in jedem aktuellen Browser auf iPhone, Android, Mac und PC. Auf dem Handy kannst du das Bild direkt über „Bild teilen“ weitergeben."]
   ]
 };
@@ -35,45 +35,44 @@ export const home = {
 export const landingPages = [
   {
     slug: "jobsuche",
-    navLabel: "Open-to-Work-Rahmen",
+    navLabel: "Jobsuche-Rahmen",
     preset: "jobsuche",
-    title: "Open-to-Work-Rahmen mit eigenem Text erstellen",
-    description: "Erstelle deinen Open-to-Work-Rahmen mit eigenem Text: #OFFENFÜRJOBS, Wunschposition oder Verfügbarkeit. Kostenlos, ohne Upload, fertig in 1 Minute.",
-    h1: "Open-to-Work-Rahmen mit eigenem Text",
-    lead: "Zeig Recruiter:innen auf den ersten Blick, dass du offen für neue Jobs bist – mit deinem eigenen Text statt dem Standard-Schriftzug.",
+    title: "Jobsuche-Rahmen fürs Profilbild mit eigenem Text",
+    description: "Erstelle deinen Jobsuche-Rahmen mit eigenem Text: „Bereit für Neues“, Wunschposition oder Verfügbarkeit. Kostenlos, ohne Upload, fertig in 1 Minute.",
+    h1: "Jobsuche-Rahmen mit eigenem Text",
+    lead: "Zeig Recruiter:innen auf den ersten Blick, dass du eine neue Stelle suchst – mit deinem eigenen Text, deinen Farben und deiner Schrift.",
     examples: ["jobsuche", "projekte", "ausbildung", "selbststaendig"],
     intro: [
-      "Der klassische Jobsuche-Rahmen sagt nur „offen für Jobs“. Mit einem eigenen Text wirst du konkreter: <strong>„Suche Junior-Marketing-Job“</strong>, <strong>„Verfügbar ab 1. Juni“</strong> oder <strong>„#OFFENFÜRJOBS · Remote“</strong>. So verstehen Recruiter:innen sofort, wonach du suchst.",
+      "Mit einem eigenen Text sagst du genau, was du suchst: <strong>„Bereit für Neues“</strong>, <strong>„Suche Junior-Marketing-Job“</strong> oder <strong>„Verfügbar ab 1. Juni“</strong>. So verstehen Recruiter:innen sofort, wonach du suchst.",
       "Tipp: Kurze Texte mit 10–20 Zeichen sind auch in der kleinen Feed-Ansicht gut lesbar. Die Miniatur-Vorschau im Editor zeigt dir, wie dein Bild im Feed wirkt."
     ],
     faq: [
-      ["Was schreibe ich in einen Open-to-Work-Rahmen?", "Bewährt haben sich kurze, konkrete Texte: #OFFENFÜRJOBS, deine Wunschrolle („Suche UX-Job“), deine Verfügbarkeit („Ab sofort verfügbar“) oder ein Ort („Jobsuche Hamburg“)."],
-      ["Ist ein eigener Rahmen besser als der offizielle?", "Der offizielle Rahmen ist sofort erkennbar, aber im Text festgelegt. Ein eigener Rahmen fällt auf und transportiert mehr Information. Viele nutzen den offiziellen Status zusätzlich in den Profileinstellungen."],
-      ["Sieht mein aktueller Arbeitgeber den Rahmen?", "Ja – ein Profilbild ist öffentlich. Wenn du diskret suchen möchtest, nutze lieber die Einstellung „nur für Recruiter sichtbar“ deines Netzwerks statt eines Rahmens."],
+      ["Was schreibe ich in einen Jobsuche-Rahmen?", "Bewährt haben sich kurze, konkrete Texte: „Bereit für Neues“, deine Wunschrolle („Suche UX-Job“), deine Verfügbarkeit („Ab sofort verfügbar“) oder ein Ort („Jobsuche Hamburg“)."],
+      ["Sieht mein aktueller Arbeitgeber den Rahmen?", "Ja – ein Profilbild ist öffentlich. Wenn du diskret suchen möchtest, nutze lieber die Datenschutz-Einstellungen deines Netzwerks statt eines Rahmens."],
       ["Wird mein Foto gespeichert?", "Nein. Dein Foto wird ausschließlich in deinem Browser verarbeitet und nie hochgeladen."]
     ]
   },
   {
     slug: "recruiting",
-    navLabel: "Hiring-Rahmen",
+    navLabel: "Recruiting-Rahmen",
     preset: "recruiting",
-    title: "Hiring-Rahmen fürs Profilbild – „Wir stellen ein“",
+    title: "Recruiting-Rahmen fürs Profilbild – „Wir suchen dich“",
     description: {
-      full: "Hiring-Rahmen fürs Profilbild erstellen: #WIRSTELLENEIN oder eigener Text in Firmenfarben. Kostenlos für dich, Firmen-Pakete für ganze Teams.",
-      free: "Hiring-Rahmen fürs Profilbild erstellen: #WIRSTELLENEIN oder eigener Text in Firmenfarben. Kostenlos, ohne Anmeldung – dein Foto bleibt im Browser."
+      full: "Recruiting-Rahmen fürs Profilbild erstellen: „Wir suchen dich“ oder eigener Text in Firmenfarben. Kostenlos für dich, Firmen-Pakete für ganze Teams.",
+      free: "Recruiting-Rahmen fürs Profilbild erstellen: „Wir suchen dich“ oder eigener Text in Firmenfarben. Kostenlos, ohne Anmeldung – dein Foto bleibt im Browser."
     },
-    h1: "Hiring-Rahmen fürs Profilbild erstellen",
-    lead: "Mach mit deinem Profilbild auf offene Stellen aufmerksam – mit „Wir stellen ein“, dem konkreten Job oder dem Namen deines Teams.",
+    h1: "Recruiting-Rahmen fürs Profilbild erstellen",
+    lead: "Mach mit deinem Profilbild auf offene Stellen aufmerksam – mit „Wir suchen dich“, dem konkreten Job oder dem Namen deines Teams.",
     examples: ["recruiting", "jobsuche", "speaker", "mentoring"],
     intro: [
-      "Jedes Profilbild, das in Kommentaren, Nachrichten und Beiträgen auftaucht, wird so zur kleinen Stellenanzeige. Statt nur „Hiring“ kannst du schreiben, <strong>wen</strong> ihr sucht: „Wir suchen Pflegekräfte“, „Join our Dev-Team“ oder „#WIRSTELLENEIN · Berlin“.",
+      "Jedes Profilbild, das in Kommentaren, Nachrichten und Beiträgen auftaucht, wird so zur kleinen Stellenanzeige. Schreib konkret, <strong>wen</strong> ihr sucht: „Wir suchen Pflegekräfte“, „Komm in unser Dev-Team“ oder „Jetzt bewerben · Berlin“.",
       {
         full: "Ihr wollt, dass das ganze Team mitmacht? Mit den <a href=\"{base}/unternehmen/\">Firmen-Paketen</a> gestaltest du einen Rahmen in euren Firmenfarben und verteilst einen Link – Mitarbeitende laden nur noch ihr Foto hoch.",
         free: "Ihr wollt, dass das ganze Team mitmacht? Legt Text, Schrift und Farben (per Hex-Code) einmal fest – dann gestaltet jede:r in einer Minute das eigene Bild, und alle Rahmen sehen einheitlich aus."
       }
     ],
     faq: [
-      ["Wie wirkt ein Hiring-Rahmen?", "Er macht offene Stellen in jedem Kontakt sichtbar, ohne dass du extra posten musst. Besonders wirksam ist er, wenn mehrere Teammitglieder ihn gleichzeitig nutzen."],
+      ["Wie wirkt ein Recruiting-Rahmen?", "Er macht offene Stellen in jedem Kontakt sichtbar, ohne dass du extra posten musst. Besonders wirksam ist er, wenn mehrere Teammitglieder ihn gleichzeitig nutzen."],
       ["Kann ich unsere Firmenfarben verwenden?", {
         full: "Ja. Ring- und Textfarbe lassen sich per Farbwähler oder Hex-Code genau einstellen. Mit Premium oder einem Firmen-Paket sind auch Farbverläufe möglich.",
         free: "Ja. Ring- und Textfarbe lassen sich per Farbwähler oder Hex-Code genau einstellen."
@@ -103,7 +102,7 @@ export const landingPages = [
     ],
     faq: [
       ["Welcher Text eignet sich für Freelancer?", "Kombiniere Rolle und Status, z. B. „Freelance Texterin · verfügbar“ oder „SAP-Berater · Projekte ab Q3“. Kurz bleibt besser lesbar."],
-      ["Kann ich den Rahmen auch auf anderen Plattformen nutzen?", "Ja. Das PNG funktioniert überall, wo Profilbilder rund dargestellt werden – z. B. Xing, Instagram, WhatsApp, Slack oder Freelancer-Portale."],
+      ["Kann ich den Rahmen auch auf anderen Plattformen nutzen?", "Ja. Das PNG funktioniert überall, wo Profilbilder rund dargestellt werden – in sozialen Netzwerken, Messengern, Team-Tools oder auf Freelancer-Portalen."],
       ["Gibt es Vorlagen speziell für Freelancer?", {
         full: "Ja, kostenlos „Freelancer“ und „Verfügbar für Projekte“. Premium enthält weitere Designs wie „Freelancer kreativ“ und „Freelancer Tech“.",
         free: "Ja, „Freelancer“ und „Verfügbar für Projekte“. Text, Schrift und Farben passt du danach frei an."
