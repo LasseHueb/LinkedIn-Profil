@@ -1,13 +1,7 @@
 /*
  * Profilbild-Rahmen-Editor – UI-Logik. Fotos werden ausschließlich lokal im Browser verarbeitet.
- *
- * Modi (über <body data-mode="…">):
- *   public – öffentlicher Editor (Zusatzfunktionen nur mit Lizenz, sonst Hinweis im Bild)
- *   admin  – Firmen-Admin gestaltet einen Firmen-Rahmen (alles freigeschaltet, kein Hinweis)
- *   team   – Mitarbeitende nutzen einen Firmen-Rahmen (ggf. gesperrt)
+ * Alle Funktionen stehen allen zur Verfügung; es gibt kein Backend.
  * Startvorlage über <body data-preset="jobsuche"> oder ?vorlage=jobsuche.
- * Kostenlose Edition (PBG_CONFIG.edition = "free"): Die Bedienelemente der Zusatzfunktionen fehlen im
- * Markup (siehe src/edition.mjs), es gibt nur den Modus "public" und keine Backend-Aufrufe.
  */
 (function () {
   "use strict";
@@ -21,36 +15,28 @@
   var t = PBG.t;
   var cfg = PBG.config || {};
   var body = document.body;
-  var mode = body.dataset.mode || "public";
 
   if (!$("editor")) return; // Seite ohne Editor
-  // Farbfelder, die es auf der Seite gibt (die zweite Ringfarbe fehlt in der kostenlosen Edition)
-  var colorKeys = COLOR_KEYS.filter(function (k) { return !!$(k); });
 
   // ---------- Zustand ----------
   var state = Object.assign({}, PBG.DEFAULTS, { zoom: 1, offsetX: 0, offsetY: 0, exportSize: 1080 });
   var photo = null;          // verkleinerter Canvas mit dem Foto (nur im Arbeitsspeicher)
   var photoName = "";
-  var logo = null;           // Firmen-Logo (nur admin/team)
+  var logo = null;           // Logo (nur im Arbeitsspeicher)
   var activePreset = null;
   var lastInfo = { scale: 1, overflow: false };
-  var team = { locked: false, company: "", watermark: false };
-  var listeners = { download: [], change: [] };
 
   var els = {
     preview: $("preview"), stage: $("stage"), mini: $("mini"), miniXs: $("mini-xs"),
     fileInput: $("file-input"), dropzone: $("dropzone"), uploadStatus: $("upload-status"),
     zoom: $("zoom"), resetCrop: $("reset-crop"), removePhoto: $("remove-photo"),
-    presetsFree: $("presets-free"), presetsExtra: $("presets-premium"),
+    presets: $("presets"),
     text: $("text"), font: $("font"), bold: $("bold"), uppercase: $("uppercase"),
     icon: $("icon"), iconPos: $("iconPos"), emojiRow: $("emoji-row"),
     gradient: $("gradient"), ringColor2Field: $("ringColor2-field"),
     textWarning: $("text-warning"), contrastWarning: $("contrast-warning"),
     download: $("download"), downloadLabel: $("download-label"), share: $("share"), exportStatus: $("export-status"),
-    watermarkNote: $("watermark-note"), watermarkNoteText: $("watermark-note-text"), watermarkUpgrade: $("watermark-upgrade"),
-    teamNote: $("team-note"),
-    upgradeDialog: $("upgrade-dialog"), upgradeReason: $("upgrade-reason"), upgradeConsent: $("upgrade-consent"),
-    upgradeBuy: $("upgrade-buy"), upgradeStatus: $("upgrade-status"), licenseInput: $("license-input"), licenseActivate: $("license-activate"),
+    watermarkNoteText: $("watermark-note-text"),
     shareDialog: $("share-dialog"), shareStatus: $("share-status"), shareDontShow: $("share-dont-show")
   };
 
@@ -91,57 +77,9 @@
     el.classList.toggle("error", !!isError);
   }
 
-  function emit(type, data) {
-    listeners[type].forEach(function (fn) { try { fn(data); } catch (e) { console.error(e); } });
-  }
-
-  // ---------- Zusatzfunktionen (Vollversion) ----------
-  /** Sind die Zusatzfunktionen nutzbar? Firmen-Rahmen (admin/team) sind immer voll ausgestattet. */
-  function unlocked() { return mode !== "public" || PBG.premium.active; }
-
   function watermarkText() {
-    if (mode === "admin") return "";
-    if (mode === "team") return team.watermark ? t("watermark", { app: cfg.appName }) : "";
-    return PBG.premium.active ? "" : t("watermark", { app: cfg.appName });
+    return t("watermark", { app: cfg.appName });
   }
-
-  /** Entfernt Zusatz-Einstellungen, falls sie nicht (mehr) freigeschaltet sind. */
-  function sanitizeForFree() {
-    if (unlocked()) return;
-    state.gradient = false;
-    if (PBG.fontById(state.font).premium || PBG.fontById(state.font).id !== state.font) state.font = PBG.DEFAULTS.font;
-    state.icon = "";
-    state.exportSize = 1080;
-    if (activePreset && PBG.presetByKey(activePreset) && PBG.presetByKey(activePreset).premium) activePreset = null;
-  }
-
-  function updateLockUI() {
-    document.documentElement.classList.toggle("premium-active", unlocked());
-    buildFontOptions();
-    buildIconOptions();
-    var free = !unlocked() && mode === "public";
-    if (els.watermarkNote) els.watermarkNote.hidden = !free;
-    if (els.watermarkNoteText) els.watermarkNoteText.textContent = t("export.watermarkNote", { watermark: t("watermark", { app: cfg.appName }) });
-    document.querySelectorAll("[data-premium-feature]").forEach(function (el) {
-      el.classList.toggle("is-locked", !unlocked());
-    });
-    document.querySelectorAll(".preset[data-premium]").forEach(function (b) {
-      b.classList.toggle("is-locked", !unlocked());
-      b.setAttribute("aria-label", b.dataset.name + (unlocked() ? "" : " – " + t("premium.locked")));
-    });
-  }
-
-  var upgradeReturnFocus = null;
-  function openUpgrade(reason, vars) {
-    if (!els.upgradeDialog) return;
-    els.upgradeReason.textContent = reason ? t("upgrade.reason." + reason, vars) : "";
-    els.upgradeReason.hidden = !reason;
-    setStatus(els.upgradeStatus, "");
-    upgradeReturnFocus = document.activeElement;
-    PBG.track("Upgrade Dialog", { grund: reason || "allgemein" });
-    showDialog(els.upgradeDialog);
-  }
-  PBG.openUpgrade = openUpgrade;
 
   function showDialog(d) {
     if (d.showModal) { if (!d.open) d.showModal(); }
@@ -150,43 +88,6 @@
 
   function closeDialog(d) {
     if (d.close) d.close(); else d.removeAttribute("open");
-  }
-
-  function bindUpgradeDialog() {
-    if (!els.upgradeDialog) return;
-    els.upgradeDialog.addEventListener("close", function () {
-      if (upgradeReturnFocus && upgradeReturnFocus.focus) upgradeReturnFocus.focus();
-    });
-    els.upgradeConsent.addEventListener("change", function () {
-      els.upgradeBuy.disabled = !els.upgradeConsent.checked;
-    });
-    els.upgradeBuy.addEventListener("click", function () {
-      if (!PBG.api.enabled) { setStatus(els.upgradeStatus, t("upgrade.unavailable"), true); return; }
-      els.upgradeBuy.disabled = true;
-      setStatus(els.upgradeStatus, t("upgrade.redirecting"));
-      PBG.premium.checkout().catch(function () {
-        setStatus(els.upgradeStatus, t("upgrade.unavailable"), true);
-        els.upgradeBuy.disabled = !els.upgradeConsent.checked;
-      });
-    });
-    els.licenseActivate.addEventListener("click", function () {
-      if (!PBG.api.enabled) { setStatus(els.upgradeStatus, t("upgrade.unavailable"), true); return; }
-      els.licenseActivate.disabled = true;
-      PBG.premium.activate(els.licenseInput.value).then(function (ok) {
-        setStatus(els.upgradeStatus, ok ? t("upgrade.success") : t("upgrade.invalid"), !ok);
-        if (ok) setTimeout(function () { closeDialog(els.upgradeDialog); }, 1200);
-      }).catch(function () {
-        setStatus(els.upgradeStatus, t("upgrade.unavailable"), true);
-      }).finally(function () { els.licenseActivate.disabled = false; });
-    });
-    if (els.watermarkUpgrade) els.watermarkUpgrade.addEventListener("click", function () { openUpgrade("watermark"); });
-
-    window.addEventListener("pbg:premium", function () {
-      sanitizeForFree();
-      updateLockUI();
-      syncControls();
-      requestRender();
-    });
   }
 
   // ---------- Schriften ----------
@@ -228,7 +129,7 @@
   }
 
   function renderState() {
-    return Object.assign({}, state, { noEmoji: !unlocked() });
+    return state;
   }
 
   function renderOpts(extra) {
@@ -250,7 +151,6 @@
     var msgs = [];
     if (lastInfo.overflow) msgs.push(t("text.tooLong"));
     else if (lastInfo.scale < 0.995) msgs.push(t("text.shrunk", { percent: Math.round(lastInfo.scale * 100) }));
-    if (!unlocked() && PBG.text.hasEmoji(state.text)) msgs.push(t("text.emojiOmitted"));
     els.textWarning.textContent = msgs.join(" ");
     els.textWarning.hidden = !msgs.length;
 
@@ -268,7 +168,7 @@
     PBG.FONTS.forEach(function (f) {
       var o = document.createElement("option");
       o.value = f.id;
-      o.textContent = f.label + (f.premium && !unlocked() ? t("premium.lockSuffix") : f.premium ? "  ★" : "");
+      o.textContent = f.label;
       els.font.appendChild(o);
     });
     els.font.value = current;
@@ -285,7 +185,7 @@
     PBG.ICONS.forEach(function (ic) {
       var o = document.createElement("option");
       o.value = ic.id;
-      o.textContent = PBG.loc(ic.label) + (unlocked() ? "" : t("premium.lockSuffix"));
+      o.textContent = PBG.loc(ic.label);
       els.icon.appendChild(o);
     });
     els.icon.value = current;
@@ -301,7 +201,6 @@
       b.textContent = e;
       b.setAttribute("aria-label", t("emoji.label") + " " + e);
       b.addEventListener("click", function () {
-        if (!unlocked()) { openUpgrade("icon"); return; }
         var el = els.text;
         var pos = el.selectionStart != null ? el.selectionStart : el.value.length;
         var end = el.selectionEnd != null ? el.selectionEnd : pos;
@@ -323,13 +222,16 @@
     els.bold.checked = state.bold;
     els.bold.disabled = PBG.fontById(state.font).weights.indexOf(700) < 0;
     els.uppercase.checked = state.uppercase;
-    if (els.gradient) { els.gradient.checked = state.gradient; els.ringColor2Field.hidden = !state.gradient; }
-    if (els.icon) { els.icon.value = state.icon; els.iconPos.value = state.iconPos; els.iconPos.disabled = !state.icon; }
+    els.gradient.checked = state.gradient;
+    els.ringColor2Field.hidden = !state.gradient;
+    els.icon.value = state.icon;
+    els.iconPos.value = state.iconPos;
+    els.iconPos.disabled = !state.icon;
     RANGE_KEYS.forEach(function (k) {
       $(k).value = state[k];
       updateOutput(k);
     });
-    colorKeys.forEach(function (k) {
+    COLOR_KEYS.forEach(function (k) {
       $(k).value = state[k];
       $(k + "-hex").value = state[k].toUpperCase();
       $(k + "-hex").removeAttribute("aria-invalid");
@@ -353,7 +255,6 @@
       activePreset = null;
       markPreset();
     }
-    emit("change", getDesign());
     requestRender();
   }
 
@@ -362,11 +263,6 @@
 
     els.font.addEventListener("change", function () {
       var f = PBG.fontById(els.font.value);
-      if (f.premium && !unlocked()) {
-        els.font.value = state.font;
-        openUpgrade("font");
-        return;
-      }
       state.font = f.id;
       els.bold.disabled = f.weights.indexOf(700) < 0;
       changed();
@@ -376,32 +272,18 @@
       els[k].addEventListener("change", function () { state[k] = els[k].checked; changed(); });
     });
 
-    if (els.gradient) {
-      els.gradient.addEventListener("change", function () {
-        if (els.gradient.checked && !unlocked()) {
-          els.gradient.checked = false;
-          openUpgrade("gradient");
-          return;
-        }
-        state.gradient = els.gradient.checked;
-        els.ringColor2Field.hidden = !state.gradient;
-        changed();
-      });
-    }
+    els.gradient.addEventListener("change", function () {
+      state.gradient = els.gradient.checked;
+      els.ringColor2Field.hidden = !state.gradient;
+      changed();
+    });
 
-    if (els.icon) {
-      els.icon.addEventListener("change", function () {
-        if (els.icon.value && !unlocked()) {
-          els.icon.value = state.icon;
-          openUpgrade("icon");
-          return;
-        }
-        state.icon = els.icon.value;
-        els.iconPos.disabled = !state.icon;
-        changed();
-      });
-      els.iconPos.addEventListener("change", function () { state.iconPos = els.iconPos.value; changed(); });
-    }
+    els.icon.addEventListener("change", function () {
+      state.icon = els.icon.value;
+      els.iconPos.disabled = !state.icon;
+      changed();
+    });
+    els.iconPos.addEventListener("change", function () { state.iconPos = els.iconPos.value; changed(); });
 
     RANGE_KEYS.forEach(function (k) {
       $(k).addEventListener("input", function () {
@@ -411,7 +293,7 @@
       });
     });
 
-    colorKeys.forEach(function (k) {
+    COLOR_KEYS.forEach(function (k) {
       var picker = $(k), hex = $(k + "-hex");
       picker.addEventListener("input", function () {
         state[k] = picker.value.toLowerCase();
@@ -447,11 +329,6 @@
       r.addEventListener("change", function () {
         if (!r.checked) return;
         var v = Number(r.value);
-        if (v > 1080 && !unlocked()) {
-          syncControls();
-          openUpgrade("size");
-          return;
-        }
         state.exportSize = v;
         els.downloadLabel.textContent = t("export.download", { size: v });
       });
@@ -474,17 +351,16 @@
   }
 
   // ---------- Vorlagen ----------
+  var PRESETS_VISIBLE = 9;   // so viele Vorlagen sind sichtbar, der Rest per „Alle … anzeigen“
   function buildPresets() {
-    if (!els.presetsFree) return;
-    els.presetsFree.innerHTML = "";
-    if (els.presetsExtra) els.presetsExtra.innerHTML = "";
+    if (!els.presets) return;
+    els.presets.innerHTML = "";
     PBG.PRESETS.forEach(function (p) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "preset";
       btn.dataset.key = p.key;
       btn.dataset.name = PBG.loc(p.name);
-      if (p.premium) btn.dataset.premium = "1";
       btn.setAttribute("aria-pressed", "false");
       var c = document.createElement("canvas");
       c.setAttribute("aria-hidden", "true");
@@ -492,33 +368,19 @@
       label.textContent = PBG.loc(p.name);
       btn.appendChild(c);
       btn.appendChild(label);
-      if (p.premium) {
-        var lock = document.createElement("span");
-        lock.className = "preset-lock";
-        lock.setAttribute("aria-hidden", "true");
-        lock.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7z"/></svg>';
-        btn.appendChild(lock);
-      }
-      btn.addEventListener("click", function () {
-        if (p.premium && !unlocked()) {
-          openUpgrade("preset", { name: PBG.loc(p.name) });
-          return;
-        }
-        applyPreset(p);
-        PBG.track("Vorlage gewählt", { vorlage: p.key });
-      });
-      (p.premium ? els.presetsExtra : els.presetsFree).appendChild(btn);
+      btn.addEventListener("click", function () { applyPreset(p); });
+      els.presets.appendChild(btn);
     });
     var more = $("more-presets");
     if (more) {
-      var count = els.presetsExtra.children.length;
+      var count = PBG.PRESETS.length;
       var setLabel = function () {
-        var open = !els.presetsExtra.classList.contains("collapsed");
+        var open = !els.presets.classList.contains("collapsed");
         more.textContent = open ? t("presets.less") : t("presets.more", { count: count });
         more.setAttribute("aria-expanded", String(open));
       };
-      more.onclick = function () { els.presetsExtra.classList.toggle("collapsed"); setLabel(); };
-      more.hidden = count <= 8;
+      more.onclick = function () { els.presets.classList.toggle("collapsed"); setLabel(); };
+      more.hidden = count <= PRESETS_VISIBLE;
       setLabel();
     }
     renderPresetThumbs();
@@ -534,7 +396,7 @@
 
   var thumbObserver = null;
   function renderPresetThumbs() {
-    if (!els.presetsFree) return;
+    if (!els.presets) return;
     var dpr = Math.min(window.devicePixelRatio || 1, 3);
     var size = Math.round(56 * dpr);
     function draw(btn) {
@@ -565,7 +427,6 @@
     activePreset = p.key;
     syncControls();
     markPreset();
-    emit("change", getDesign());
     requestRender();
   }
 
@@ -646,7 +507,6 @@
         els.zoom.value = 1; updateOutput("zoom");
         els.removePhoto.hidden = false;
         setStatus(els.uploadStatus, t("upload.loaded", { name: photoName }));
-        PBG.track("Foto geladen");
         requestRender();
       })
       .catch(function () {
@@ -790,7 +650,7 @@
 
   // ---------- Export ----------
   function exportSize() {
-    return unlocked() ? state.exportSize : 1080;
+    return state.exportSize;
   }
 
   function exportCanvas() {
@@ -816,10 +676,6 @@
     });
   }
 
-  function exportMeta() {
-    return { vorlage: activePreset || "eigene", groesse: String(exportSize()), premium: unlocked() ? "ja" : "nein", modus: mode };
-  }
-
   function bindExport() {
     els.download.addEventListener("click", function () {
       els.download.disabled = true;
@@ -835,8 +691,6 @@
         a.remove();
         setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
         setStatus(els.exportStatus, t("export.done"));
-        PBG.track("Download", exportMeta());
-        emit("download", exportMeta());
         setTimeout(maybeShowShareDialog, 600);
       }).finally(function () {
         els.download.disabled = false;
@@ -855,10 +709,7 @@
       // Synchron erzeugen, damit die Nutzergeste für navigator.share erhalten bleibt
       var blob = dataUrlToBlob(exportCanvas().toDataURL("image/png"));
       var file = new File([blob], t("export.filename"), { type: "image/png" });
-      navigator.share({ files: [file] }).then(function () {
-        PBG.track("Bild geteilt", exportMeta());
-        emit("download", exportMeta());
-      }).catch(function (err) {
+      navigator.share({ files: [file] }).catch(function (err) {
         if (err && err.name === "AbortError") return;
         setStatus(els.exportStatus, t("export.shareError"), true);
       });
@@ -870,15 +721,13 @@
   }
 
   // ---------- Teilen-Dialog (virale Verbreitung): „Link kopieren“ und Teilen-Funktion des Geräts ----------
-  /** channel: "link" (Link kopieren) oder "native" (Web Share API) – landet als utm_source in der Statistik. */
-  function appShareUrl(channel) {
+  function appShareUrl() {
     var p = activePreset && PBG.presetByKey(activePreset);
-    var path = mode === "public" && p && !p.premium ? "/vorlage/" + p.key + "/" : "/";
-    return PBG.absUrl(path) + "?utm_source=" + channel + "&utm_medium=share&utm_campaign=app-teilen";
+    return PBG.absUrl(p ? "/vorlage/" + p.key + "/" : "/");
   }
 
   function maybeShowShareDialog() {
-    if (!els.shareDialog || mode === "admin") return;
+    if (!els.shareDialog) return;
     if (PBG.storage.get("pbg-share-dismissed") === "1") return;
     setStatus(els.shareStatus, "");
     showDialog(els.shareDialog);
@@ -893,8 +742,8 @@
     });
 
     $("share-copy").addEventListener("click", function () {
-      var url = appShareUrl("link");
-      var done = function () { setStatus(els.shareStatus, t("share.copied")); PBG.track("App geteilt", { kanal: "link" }); };
+      var url = appShareUrl();
+      var done = function () { setStatus(els.shareStatus, t("share.copied")); };
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(done, function () { fallbackCopy(url); done(); });
       } else { fallbackCopy(url); done(); }
@@ -903,9 +752,7 @@
     var nativeBtn = $("share-native");
     nativeBtn.hidden = !(navigator.share && isTouch());
     nativeBtn.addEventListener("click", function () {
-      navigator.share({ title: cfg.appName, text: text(), url: appShareUrl("native") }).then(function () {
-        PBG.track("App geteilt", { kanal: "nativ" });
-      }).catch(function () { /* abgebrochen */ });
+      navigator.share({ title: cfg.appName, text: text(), url: appShareUrl() }).catch(function () { /* abgebrochen */ });
     });
 
     els.shareDontShow.addEventListener("change", function () {
@@ -926,76 +773,16 @@
     ta.remove();
   }
 
-  // ---------- Öffentliche Schnittstelle (Admin- und Team-Seite) ----------
-  function getDesign() {
-    var d = {};
-    PBG.DESIGN_KEYS.forEach(function (k) { d[k] = state[k]; });
-    return d;
-  }
-
-  /** Übernimmt gespeicherte Einstellungen; unbekannte oder ungültige Werte werden ignoriert. */
-  function setDesign(design) {
-    design = design || {};
-    PBG.DESIGN_KEYS.forEach(function (k) {
-      if (!(k in design)) return;
-      var v = design[k], def = PBG.DEFAULTS[k];
-      if (typeof def === "number") { v = Number(v); if (!isFinite(v)) return; }
-      else if (typeof def === "boolean") v = !!v;
-      else v = String(v);
-      if (COLOR_KEYS.indexOf(k) >= 0 && !normalizeHex(v)) return;
-      state[k] = v;
-    });
-    var range = { size: [35, 95], spacing: [-5, 50], textPos: [-90, 90], ringWidth: [8, 32], ringLength: [180, 350], ringRotation: [-90, 90], fade: [0, 70], opacity: [40, 100] };
-    Object.keys(range).forEach(function (k) { state[k] = clamp(state[k], range[k][0], range[k][1]); });
-    state.text = state.text.slice(0, 60);
-    if (PBG.fontById(state.font).id !== state.font) state.font = PBG.DEFAULTS.font;
-    activePreset = null;
-    sanitizeForFree();
-    syncControls();
-    markPreset();
-    requestRender();
-  }
-
-  PBG.editor = {
-    getDesign: getDesign,
-    setDesign: setDesign,
-    /** Firmen-Logo setzen (HTMLImageElement oder null). */
-    setLogo: function (img) { logo = img || null; requestRender(); },
-    /** Team-Modus: Rahmen gesperrt → nur Foto & Export sichtbar. */
-    setTeam: function (opts) {
-      team.locked = !!opts.locked;
-      team.company = opts.company || "";
-      team.watermark = !!opts.watermark;
-      ["presets", "text", "ring"].forEach(function (name) {
-        var panel = document.querySelector('[data-panel="' + name + '"]');
-        if (panel) panel.hidden = team.locked || name === "presets";
-      });
-      if (els.teamNote) {
-        els.teamNote.hidden = !team.locked;
-        els.teamNote.textContent = t("team.locked", { company: team.company });
-      }
-      requestRender();
-    },
-    on: function (type, fn) { listeners[type].push(fn); },
-    render: requestRender
-  };
-
   // ---------- Start ----------
   function initialPreset() {
     var params = new URLSearchParams(location.search);
     var key = params.get("vorlage") || body.dataset.preset || "jobsuche";
-    var p = PBG.presetByKey(key) || PBG.PRESETS[0];
-    if (p.premium && !unlocked()) {
-      // Gesperrte Vorlage über Link geöffnet: Hinweis statt stiller Änderung
-      setTimeout(function () { openUpgrade("preset", { name: PBG.loc(p.name) }); }, 400);
-      p = PBG.PRESETS[0];
-    }
-    return p;
+    return PBG.presetByKey(key) || PBG.PRESETS[0];
   }
 
   function init() {
     PBG.applyI18n();
-    if (els.upgradeBuy) els.upgradeBuy.textContent = t("upgrade.buy", { price: (cfg.premium || {}).price || "" });
+    els.watermarkNoteText.textContent = t("export.watermarkNote", { watermark: watermarkText() });
 
     buildFontOptions();
     buildIconOptions();
@@ -1004,18 +791,9 @@
     bindUpload();
     bindCrop();
     bindExport();
-    bindUpgradeDialog();
     bindShareDialog();
-
-    if (mode === "public" || mode === "admin") {
-      buildPresets();
-      applyPreset(initialPreset());
-    } else {
-      var presetsPanel = document.querySelector('[data-panel="presets"]');
-      if (presetsPanel) presetsPanel.hidden = true;
-      syncControls();
-    }
-    updateLockUI();
+    buildPresets();
+    applyPreset(initialPreset());
 
     // Neu zeichnen, wenn sich Größe oder Pixeldichte ändern
     if (window.ResizeObserver) new ResizeObserver(requestRender).observe(els.preview);

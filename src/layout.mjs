@@ -5,7 +5,6 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { stripEdition } from "./edition.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const editorHtml = readFileSync(join(here, "partials/editor.html"), "utf8");
@@ -15,13 +14,10 @@ export function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
-/** Ersetzt {app}, {price}, {base} … in Inhaltstexten. */
+/** Ersetzt {app} und {base} in Inhaltstexten. */
 export function fill(ctx, s) {
   return String(s ?? "")
     .replaceAll("{app}", ctx.cfg.appName)
-    .replaceAll("{price}", ctx.cfg.premium.price)
-    .replaceAll("{starter}", ctx.cfg.business.starterPrice)
-    .replaceAll("{team}", ctx.cfg.business.teamPrice)
     .replaceAll("{base}", ctx.cfg.basePath);
 }
 
@@ -34,7 +30,7 @@ export function independenceNote(ctx) {
 }
 
 export function editor(ctx) {
-  return stripEdition(editorHtml, ctx.edition, "editor.html").replaceAll("{{base}}", ctx.cfg.basePath);
+  return editorHtml.replaceAll("{{base}}", ctx.cfg.basePath);
 }
 
 const ICON_SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3z" fill="currentColor"/></svg>';
@@ -84,10 +80,7 @@ export function webAppJsonLd(ctx, url) {
     browserRequirements: "Benötigt JavaScript und einen aktuellen Browser",
     inLanguage: "de",
     isAccessibleForFree: true,
-    offers: [
-      { "@type": "Offer", name: "Kostenlos", price: "0", priceCurrency: c.premium.currency },
-      ...(ctx.full ? [{ "@type": "Offer", name: "Premium (einmalig)", price: String(c.premium.priceValue), priceCurrency: c.premium.currency }] : [])
-    ],
+    offers: { "@type": "Offer", name: "Kostenlos", price: "0", priceCurrency: "EUR" },
     featureList: ["Eigener Text auf dem Profilbild-Ring", "Farben und Schriftarten frei wählbar", "PNG-Export 1080 × 1080 px", "Fotos bleiben im Browser"]
   };
 }
@@ -105,9 +98,7 @@ function header(ctx, path) {
   const nav = [
     ["/", "Rahmen erstellen"],
     ["/rahmen/jobsuche/", "Jobsuche"],
-    ["/rahmen/recruiting/", "Recruiting"],
-    ...(ctx.hasPage("/premium/") ? [["/premium/", 'Premium <span class="pro-badge" aria-hidden="true">PRO</span>']] : []),
-    ...(ctx.hasPage("/unternehmen/") ? [["/unternehmen/", "Für Unternehmen"]] : [])
+    ["/rahmen/recruiting/", "Recruiting"]
   ];
   return `<header class="site-header">
     <a class="brand" href="${u("/")}" aria-label="${esc(ctx.cfg.appName)} – Startseite">
@@ -115,7 +106,7 @@ function header(ctx, path) {
       <span class="brand-name">${esc(ctx.cfg.appName)}</span>
     </a>
     <nav class="site-nav" aria-label="Hauptnavigation">
-      ${nav.map(([p, label]) => `<a href="${u(p)}"${p === path ? ' aria-current="page"' : ""}${p === "/premium/" ? ' class="nav-premium"' : ""}>${label}</a>`).join("\n      ")}
+      ${nav.map(([p, label]) => `<a href="${u(p)}"${p === path ? ' aria-current="page"' : ""}>${label}</a>`).join("\n      ")}
     </nav>
     <div class="segmented" role="radiogroup" aria-label="Farbschema" id="theme-switch">
       <button type="button" role="radio" data-theme-value="auto" title="System" aria-checked="true">
@@ -139,11 +130,7 @@ function footer(ctx) {
   const links = [
     ...ctx.landing.map((l) => [`/rahmen/${l.slug}/`, l.navLabel || l.h1]),
   ];
-  const legal = [
-    ...(ctx.hasPage("/premium/") ? [["/premium/", "Premium"]] : []),
-    ...(ctx.hasPage("/unternehmen/") ? [["/unternehmen/", "Für Unternehmen"]] : []),
-    ["/impressum/", "Impressum"], ["/datenschutz/", "Datenschutz"], ["/agb/", "AGB"], ["/widerruf/", "Widerruf"]
-  ].filter(([p]) => ctx.hasPage(p));
+  const legal = [["/impressum/", "Impressum"], ["/datenschutz/", "Datenschutz"]];
   return `<footer class="site-footer">
     <ul class="footer-nav" aria-label="Anwendungsfälle">${links.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
     <ul class="footer-nav" aria-label="Rechtliches">${legal.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
@@ -152,21 +139,9 @@ function footer(ctx) {
   </footer>`;
 }
 
-function analyticsTag(cfg) {
-  const a = cfg.analytics || {};
-  if (a.provider === "plausible" && a.src && a.domain) {
-    return `<script defer data-domain="${esc(a.domain)}" src="${esc(a.src)}"></script>
-  <script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script>`;
-  }
-  if (a.provider === "umami" && a.src && a.websiteId) {
-    return `<script defer src="${esc(a.src)}" data-website-id="${esc(a.websiteId)}"></script>`;
-  }
-  return "";
-}
-
 /**
  * Vollständige HTML-Seite.
- * opts: path, title, description, main (HTML), mode, preset, noindex, canonical, og, jsonLd[], scripts[], editor(bool), bodyClass
+ * opts: path, title, description, main (HTML), preset, noindex, canonical, og, jsonLd[], scripts[], editor(bool), bodyClass
  */
 export function page(ctx, opts) {
   const c = ctx.cfg;
@@ -215,10 +190,9 @@ export function page(ctx, opts) {
   <link rel="stylesheet" href="${u("/css/styles.css")}?v=${ver}">
   <script>try{var t=localStorage.getItem("pbg-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
   ${scripts.map((s) => `<script defer src="${u(s)}?v=${ver}"></script>`).join("\n  ")}
-  ${analyticsTag(c)}
   ${ld}
 </head>
-<body data-mode="${esc(opts.mode || "public")}"${opts.preset ? ` data-preset="${esc(opts.preset)}"` : ""}${opts.bodyClass ? ` class="${esc(opts.bodyClass)}"` : ""}>
+<body${opts.preset ? ` data-preset="${esc(opts.preset)}"` : ""}${opts.bodyClass ? ` class="${esc(opts.bodyClass)}"` : ""}>
   ${opts.editor ? '<a class="skip-link" href="#controls">Zu den Einstellungen springen</a>' : ""}
   ${header(ctx, opts.path)}
   <main id="main">

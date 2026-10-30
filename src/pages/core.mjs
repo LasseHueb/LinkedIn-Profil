@@ -136,7 +136,7 @@ export default function pages(ctx) {
         preset: p.key,
         main: `
   <div class="hero">
-    <h1>Vorlage „${esc(p.name.de)}“${p.premium ? ' <span class="pro-badge">PRO</span>' : ""}</h1>
+    <h1>Vorlage „${esc(p.name.de)}“</h1>
     <p class="lead">Lade dein Foto hoch – Text, Farben und Schrift kannst du frei anpassen.</p>
   </div>
   ${privacyNote()}

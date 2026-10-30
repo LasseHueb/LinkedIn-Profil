@@ -28,8 +28,6 @@
   <!-- Einstellungen -->
   <section class="controls-col" id="controls" tabindex="-1" data-i18n-aria="a11y.controls" aria-label="Einstellungen">
 
-    <p class="team-note" id="team-note" hidden></p>
-
     <!-- 1. Foto -->
     <fieldset class="panel" data-panel="photo">
       <legend data-i18n="upload.heading">1. Foto</legend>
@@ -63,15 +61,8 @@
     <fieldset class="panel" data-panel="presets">
       <legend data-i18n="presets.heading">2. Vorlage</legend>
       <p class="small muted" data-i18n="presets.hint">Startpunkt wählen – danach alles frei anpassbar.</p>
-      <!-- @full-start -->
-      <p class="preset-group" data-i18n="presets.free">Kostenlos</p>
-      <!-- @full-end -->
-      <div class="presets" id="presets-free"></div>
-      <!-- @full-start -->
-      <p class="preset-group"><span data-i18n="presets.premium">Premium-Vorlagen</span> <span class="pro-badge" aria-hidden="true">PRO</span></p>
-      <div class="presets presets-premium collapsed" id="presets-premium"></div>
-      <button type="button" class="btn btn-ghost more-presets" id="more-presets" aria-controls="presets-premium" aria-expanded="false"></button>
-      <!-- @full-end -->
+      <div class="presets presets-list collapsed" id="presets"></div>
+      <button type="button" class="btn btn-ghost more-presets" id="more-presets" aria-controls="presets" aria-expanded="false"></button>
     </fieldset>
 
     <!-- 3. Text -->
@@ -114,11 +105,9 @@
         </div>
       </div>
       <p class="warning" id="contrast-warning" role="status" aria-live="polite" hidden></p>
-
-      <!-- @full-start -->
-      <div class="field-row" data-premium-feature="icon">
+      <div class="field-row">
         <div class="field">
-          <label for="icon"><span data-i18n="icon.label">Symbol im Ring</span> <span class="pro-badge" aria-hidden="true">PRO</span></label>
+          <label for="icon"><span data-i18n="icon.label">Symbol im Ring</span></label>
           <select id="icon"></select>
         </div>
         <div class="field">
@@ -130,11 +119,10 @@
           </select>
         </div>
       </div>
-      <div class="field" data-premium-feature="icon">
-        <span class="label" id="emoji-label"><span data-i18n="emoji.label">Emoji einfügen</span> <span class="pro-badge" aria-hidden="true">PRO</span></span>
+      <div class="field">
+        <span class="label" id="emoji-label"><span data-i18n="emoji.label">Emoji einfügen</span></span>
         <div class="emoji-row" id="emoji-row" role="group" aria-labelledby="emoji-label"></div>
       </div>
-      <!-- @full-end -->
     </fieldset>
 
     <!-- 4. Ring -->
@@ -147,9 +135,8 @@
           <input type="text" class="hex" id="ringColor-hex" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="hex.label" aria-label="Hex-Code">
         </div>
       </div>
-      <!-- @full-start -->
-      <div class="toggles" data-premium-feature="gradient">
-        <label class="switch"><input type="checkbox" id="gradient"><span class="track" aria-hidden="true"></span><span data-i18n="ring.gradient">Farbverlauf</span> <span class="pro-badge" aria-hidden="true">PRO</span></label>
+      <div class="toggles">
+        <label class="switch"><input type="checkbox" id="gradient"><span class="track" aria-hidden="true"></span><span data-i18n="ring.gradient">Farbverlauf</span></label>
       </div>
       <div class="field color-field" id="ringColor2-field">
         <label for="ringColor2" data-i18n="ring.color2">Zweite Farbe</label>
@@ -158,7 +145,6 @@
           <input type="text" class="hex" id="ringColor2-hex" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="hex.label" aria-label="Hex-Code">
         </div>
       </div>
-      <!-- @full-end -->
 
       <div class="field">
         <div class="field-head"><label for="ringWidth" data-i18n="ring.width">Ringbreite</label><output for="ringWidth" id="ringWidth-out"></output></div>
@@ -193,15 +179,13 @@
             <label><input type="radio" name="bg" value="#ffffff"><span data-i18n="export.white">Weiß</span></label>
           </div>
         </div>
-        <!-- @full-start -->
         <div class="field">
           <span class="label" id="size-label" data-i18n="export.size">Auflösung</span>
           <div class="segmented segmented-text" role="radiogroup" aria-labelledby="size-label">
             <label><input type="radio" name="exportSize" value="1080"><span>1080 px</span></label>
-            <label data-premium-feature="size"><input type="radio" name="exportSize" value="2048"><span>2048 px</span> <span class="pro-badge" aria-hidden="true">PRO</span></label>
+            <label><input type="radio" name="exportSize" value="2048"><span>2048 px</span></label>
           </div>
         </div>
-        <!-- @full-end -->
       </div>
       <div class="button-row">
         <button type="button" class="btn btn-primary" id="download">
@@ -216,44 +200,11 @@
       <p class="status" id="export-status" role="status" aria-live="polite"></p>
       <p class="small muted" id="watermark-note" data-free-only>
         <span id="watermark-note-text"></span>
-        <!-- @full-start -->
-        <button type="button" class="text-button" id="watermark-upgrade" data-i18n="export.watermarkUpgrade">Ohne Hinweis mit Premium</button>
-        <!-- @full-end -->
       </p>
       <p class="small muted" data-i18n="export.info">Tipp: Die meisten Netzwerke schneiden Profilbilder automatisch rund zu.</p>
     </fieldset>
   </section>
 </div>
-
-<!-- @full-start -->
-<!-- Upgrade-Dialog -->
-<dialog class="dialog" id="upgrade-dialog" aria-labelledby="upgrade-title">
-  <form method="dialog" class="dialog-close-form"><button class="icon-button" value="close" data-i18n-aria="share.close" aria-label="Schließen">✕</button></form>
-  <h2 id="upgrade-title"><span class="pro-badge" aria-hidden="true">PRO</span> <span data-i18n="upgrade.title">Premium freischalten</span></h2>
-  <p class="upgrade-reason" id="upgrade-reason"></p>
-  <p data-i18n="upgrade.lead">Einmalig – kein Abo, kein Konto, kein Passwort.</p>
-  <ul class="check-list">
-    <li data-i18n="upgrade.f1">Kein Hinweis im Bild</li>
-    <li data-i18n="upgrade.f2">Farbverläufe</li>
-    <li data-i18n="upgrade.f3">5 zusätzliche Schriftarten</li>
-    <li data-i18n="upgrade.f4">20+ Premium-Vorlagen</li>
-    <li data-i18n="upgrade.f5">Symbole &amp; Emojis im Ring</li>
-    <li data-i18n="upgrade.f6">Export in 2048 × 2048 px</li>
-  </ul>
-  <label class="consent"><input type="checkbox" id="upgrade-consent"> <span data-i18n="upgrade.consent">Ich verlange ausdrücklich, dass mit der Freischaltung sofort begonnen wird …</span></label>
-  <button type="button" class="btn btn-primary btn-block" id="upgrade-buy" disabled data-i18n="upgrade.buy">Jetzt freischalten</button>
-  <p class="small muted center"><span data-i18n="upgrade.legal">Es gelten die AGB. Sichere Zahlung über Stripe.</span> <a href="{{base}}/premium/" data-i18n="upgrade.more">Alle Details zu Premium</a></p>
-  <p class="status" id="upgrade-status" role="status" aria-live="polite"></p>
-  <details class="key-entry">
-    <summary data-i18n="upgrade.haveKey">Schon gekauft? Lizenzschlüssel eingeben</summary>
-    <div class="inline-form">
-      <label class="visually-hidden" for="license-input" data-i18n="upgrade.keyLabel">Lizenzschlüssel</label>
-      <input type="text" id="license-input" placeholder="PR-XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false">
-      <button type="button" class="btn btn-secondary" id="license-activate" data-i18n="upgrade.activate">Aktivieren</button>
-    </div>
-  </details>
-</dialog>
-<!-- @full-end -->
 
 <!-- Teilen-Dialog -->
 <dialog class="dialog" id="share-dialog" aria-labelledby="share-title">

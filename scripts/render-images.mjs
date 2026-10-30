@@ -18,7 +18,7 @@ try { ({ chromium } = await import("playwright")); } catch {
   console.error("Playwright fehlt. Installieren mit: npm i --no-save playwright && npx playwright install chromium");
   process.exit(1);
 }
-const { home, landingPages, staticPages } = await import(pathToFileURL(join(root, "src/content.mjs")).href);
+const { home, landingPages } = await import(pathToFileURL(join(root, "src/content.mjs")).href);
 
 const port = 8791;
 const server = spawn(process.execPath, [join(root, "scripts/serve.mjs")], { env: { ...process.env, PORT: String(port) }, stdio: "ignore" });
@@ -137,7 +137,7 @@ await page.evaluate(() => {
   };
 });
 
-const presets = await page.evaluate(() => PBG.PRESETS.map((p) => ({ key: p.key, premium: !!p.premium, name: p.name.de, text: p.text.de })));
+const presets = await page.evaluate(() => PBG.PRESETS.map((p) => ({ key: p.key, name: p.name.de, text: p.text.de })));
 let i = 0;
 for (const p of presets) {
   save(`examples/${p.key}.webp`, await page.evaluate(async ([k, n]) => (await window.__example(k, 320, n)).toDataURL("image/webp", 0.86), [p.key, i]));
@@ -151,8 +151,6 @@ const sub = "Eigener Text · Kostenlos · Ohne Upload";
 await og("default", "jobsuche", "Profilbild-Rahmen mit eigenem Text", sub, 0);
 await og("home", home.preset, home.h1.replace("{app}", ""), sub, 0);
 for (const [n, l] of landingPages.entries()) await og(l.slug, l.preset, l.h1, sub, n + 1);
-await og("premium", "recruiting-neon", "Premium: Rahmen ohne Hinweis, mit Verläufen & 20+ Vorlagen", "Einmalig – kein Abo", 2);
-await og("unternehmen", "recruiting", "Firmen-Rahmen fürs ganze Team", "Firmenfarben · Logo · ein Link für alle", 4);
 
 // App-Icons
 for (const [name, size] of [["icon-192.png", 192], ["icon-512.png", 512], ["apple-touch-icon.png", 180]]) {

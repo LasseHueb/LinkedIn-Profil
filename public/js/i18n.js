@@ -36,11 +36,7 @@ PBG.I18N = {
 
     "presets.heading": "2. Vorlage",
     "presets.hint": "Startpunkt wählen – danach alles frei anpassbar.",
-    /* @full-start */
-    "presets.free": "Kostenlos",
-    "presets.premium": "Premium-Vorlagen",
-    "presets.more": "Alle {count} Premium-Vorlagen anzeigen",
-    /* @full-end */
+    "presets.more": "Alle {count} Vorlagen anzeigen",
     "presets.less": "Weniger anzeigen",
 
     "text.heading": "3. Text",
@@ -56,12 +52,6 @@ PBG.I18N = {
     "text.shrunk": "Der Text ist lang und wurde automatisch auf {percent} % verkleinert.",
     "text.tooLong": "Der Text ist zu lang für den Ring. Kürze ihn oder verlängere den Ring.",
     "text.lowContrast": "Geringer Kontrast zwischen Text und Ring ({ratio}:1) – der Text könnte schwer lesbar sein.",
-    /* @full-start */
-    "text.emojiOmitted": "Emojis im Ring sind eine Premium-Funktion – sie werden im Bild weggelassen.",
-    /* @full-end */
-    /* @free-start */
-    "text.emojiOmitted": "Emojis werden im Bild weggelassen.",
-    /* @free-end */
 
     "icon.label": "Symbol im Ring",
     "icon.none": "Kein Symbol",
@@ -89,51 +79,13 @@ PBG.I18N = {
     "export.download": "PNG herunterladen · {size} px",
     "export.share": "Bild teilen",
     "export.info": "Tipp: Die meisten Netzwerke schneiden Profilbilder automatisch rund zu.",
-    /* @full-start */
-    "export.watermarkNote": "Kostenlose Bilder enthalten unten einen kleinen Hinweis „{watermark}“.",
-    "export.watermarkUpgrade": "Ohne Hinweis mit Premium",
-    /* @full-end */
-    /* @free-start */
     "export.watermarkNote": "Die Bilder enthalten unten einen kleinen Hinweis „{watermark}“.",
-    /* @free-end */
     "export.done": "Bild wurde erstellt.",
     "export.shareError": "Teilen ist fehlgeschlagen. Nutze stattdessen „Herunterladen“.",
     "export.filename": "profilbild-rahmen.png",
 
     "watermark": "Erstellt mit {app}",
 
-    /* @full-start */
-    "premium.lockSuffix": "  🔒 PRO",
-    "premium.badge": "Premium",
-    "premium.locked": "Premium-Funktion – zum Freischalten klicken",
-    "premium.active": "Premium aktiv",
-
-    "upgrade.title": "Premium freischalten",
-    "upgrade.lead": "Einmalig {price} – kein Abo, kein Konto, kein Passwort.",
-    "upgrade.reason.gradient": "Farbverläufe gehören zu Premium.",
-    "upgrade.reason.font": "Diese Schriftart gehört zu Premium.",
-    "upgrade.reason.preset": "Die Vorlage „{name}“ gehört zu Premium.",
-    "upgrade.reason.icon": "Symbole und Emojis im Ring gehören zu Premium.",
-    "upgrade.reason.size": "Der Export in 2048 × 2048 px gehört zu Premium.",
-    "upgrade.reason.watermark": "Bilder ohne Hinweis „Erstellt mit …“ gibt es mit Premium.",
-    "upgrade.f1": "Kein Hinweis im Bild",
-    "upgrade.f2": "Farbverläufe",
-    "upgrade.f3": "5 zusätzliche Schriftarten",
-    "upgrade.f4": "20+ Premium-Vorlagen",
-    "upgrade.f5": "Symbole & Emojis im Ring",
-    "upgrade.f6": "Export in 2048 × 2048 px",
-    "upgrade.consent": "Ich verlange ausdrücklich, dass mit der Freischaltung sofort begonnen wird, und weiß, dass ich dadurch mein Widerrufsrecht verliere.",
-    "upgrade.buy": "Jetzt für {price} freischalten",
-    "upgrade.legal": "Es gelten die AGB. Sichere Zahlung über Stripe.",
-    "upgrade.haveKey": "Schon gekauft? Lizenzschlüssel eingeben",
-    "upgrade.keyLabel": "Lizenzschlüssel",
-    "upgrade.activate": "Aktivieren",
-    "upgrade.invalid": "Dieser Lizenzschlüssel ist ungültig.",
-    "upgrade.success": "Premium ist aktiv. Viel Spaß!",
-    "upgrade.unavailable": "Der Kauf ist gerade nicht möglich. Bitte versuche es später erneut.",
-    "upgrade.redirecting": "Weiterleitung zu Stripe …",
-    "upgrade.more": "Alle Details zu Premium",
-    /* @full-end */
 
     "share.title": "Gefällt dir dein Rahmen?",
     "share.lead": "Teile die App mit deinem Netzwerk – das hilft uns sehr, kostenlos zu bleiben.",
@@ -143,8 +95,6 @@ PBG.I18N = {
     "share.more": "Teilen …",
     "share.close": "Schließen",
     "share.dontShow": "Nicht mehr anzeigen",
-
-    "team.locked": "Dieser Rahmen wurde von {company} festgelegt. Lade einfach dein Foto hoch.",
 
     "hex.label": "Hex-Code",
     "hex.invalid": "Ungültiger Hex-Code",
@@ -181,11 +131,7 @@ PBG.I18N = {
 
     "presets.heading": "2. Template",
     "presets.hint": "Pick a starting point – everything can be customised afterwards.",
-    /* @full-start */
-    "presets.free": "Free",
-    "presets.premium": "Premium templates",
-    "presets.more": "Show all {count} premium templates",
-    /* @full-end */
+    "presets.more": "Show all {count} templates",
     "presets.less": "Show less",
 
     "text.heading": "3. Text",
@@ -201,12 +147,6 @@ PBG.I18N = {
     "text.shrunk": "The text is long and was automatically reduced to {percent} %.",
     "text.tooLong": "The text is too long for the ring. Shorten it or make the ring longer.",
     "text.lowContrast": "Low contrast between text and ring ({ratio}:1) – the text may be hard to read.",
-    /* @full-start */
-    "text.emojiOmitted": "Emojis on the ring are a premium feature – they are left out of the image.",
-    /* @full-end */
-    /* @free-start */
-    "text.emojiOmitted": "Emojis are left out of the image.",
-    /* @free-end */
 
     "icon.label": "Symbol on the ring",
     "icon.none": "No symbol",
@@ -234,51 +174,13 @@ PBG.I18N = {
     "export.download": "Download PNG · {size} px",
     "export.share": "Share image",
     "export.info": "Tip: most networks crop profile pictures to a circle automatically.",
-    /* @full-start */
-    "export.watermarkNote": "Free images contain a small “{watermark}” note at the bottom.",
-    "export.watermarkUpgrade": "Remove it with Premium",
-    /* @full-end */
-    /* @free-start */
     "export.watermarkNote": "Images contain a small “{watermark}” note at the bottom.",
-    /* @free-end */
     "export.done": "Image created.",
     "export.shareError": "Sharing failed. Please use “Download” instead.",
     "export.filename": "profile-frame.png",
 
     "watermark": "Made with {app}",
 
-    /* @full-start */
-    "premium.lockSuffix": "  🔒 PRO",
-    "premium.badge": "Premium",
-    "premium.locked": "Premium feature – click to unlock",
-    "premium.active": "Premium active",
-
-    "upgrade.title": "Unlock Premium",
-    "upgrade.lead": "One-time {price} – no subscription, no account, no password.",
-    "upgrade.reason.gradient": "Gradients are part of Premium.",
-    "upgrade.reason.font": "This font is part of Premium.",
-    "upgrade.reason.preset": "The template “{name}” is part of Premium.",
-    "upgrade.reason.icon": "Symbols and emojis on the ring are part of Premium.",
-    "upgrade.reason.size": "Exporting at 2048 × 2048 px is part of Premium.",
-    "upgrade.reason.watermark": "Images without the “Made with …” note come with Premium.",
-    "upgrade.f1": "No note in the image",
-    "upgrade.f2": "Gradients",
-    "upgrade.f3": "5 extra fonts",
-    "upgrade.f4": "20+ premium templates",
-    "upgrade.f5": "Symbols & emojis on the ring",
-    "upgrade.f6": "Export at 2048 × 2048 px",
-    "upgrade.consent": "I expressly request that the unlock starts immediately and understand that I thereby lose my right of withdrawal.",
-    "upgrade.buy": "Unlock now for {price}",
-    "upgrade.legal": "Terms apply. Secure payment via Stripe.",
-    "upgrade.haveKey": "Already bought? Enter licence key",
-    "upgrade.keyLabel": "Licence key",
-    "upgrade.activate": "Activate",
-    "upgrade.invalid": "This licence key is invalid.",
-    "upgrade.success": "Premium is active. Enjoy!",
-    "upgrade.unavailable": "Purchasing is currently unavailable. Please try again later.",
-    "upgrade.redirecting": "Redirecting to Stripe …",
-    "upgrade.more": "All Premium details",
-    /* @full-end */
 
     "share.title": "Like your frame?",
     "share.lead": "Share the app with your network – it really helps us stay free.",
@@ -288,8 +190,6 @@ PBG.I18N = {
     "share.more": "Share …",
     "share.close": "Close",
     "share.dontShow": "Don't show again",
-
-    "team.locked": "This frame was set by {company}. Just upload your photo.",
 
     "hex.label": "Hex code",
     "hex.invalid": "Invalid hex code",
@@ -323,8 +223,7 @@ PBG.loc = function (obj) {
 PBG.applyI18n = function (root) {
   root = root || document;
   var vars = {
-    app: (PBG.config && PBG.config.appName) || "",
-    price: (PBG.config && PBG.config.premium && PBG.config.premium.price) || ""
+    app: (PBG.config && PBG.config.appName) || ""
   };
   root.querySelectorAll("[data-i18n]").forEach(function (el) {
     el.textContent = PBG.t(el.getAttribute("data-i18n"), vars);

@@ -1,7 +1,0 @@
-# Build-Einstellungen für Netlify. Header & Rewrites werden vom Build als dist/_headers und dist/_redirects erzeugt.
-[build]
-  command = "node scripts/build.mjs"
-  publish = "dist"
-
-[build.environment]
-  NODE_VERSION = "20"
