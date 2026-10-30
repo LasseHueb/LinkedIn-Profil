@@ -151,7 +151,7 @@ const sub = "Eigener Text · Kostenlos · Ohne Upload";
 await og("default", "jobsuche", "Profilbild-Rahmen mit eigenem Text", sub, 0);
 await og("home", home.preset, home.h1.replace("{app}", ""), sub, 0);
 for (const [n, l] of landingPages.entries()) await og(l.slug, l.preset, l.h1, sub, n + 1);
-await og("premium", "hiring-neon", "Premium: Rahmen ohne Hinweis, mit Verläufen & 20+ Vorlagen", "Einmalig – kein Abo", 2);
+await og("premium", "recruiting-neon", "Premium: Rahmen ohne Hinweis, mit Verläufen & 20+ Vorlagen", "Einmalig – kein Abo", 2);
 await og("unternehmen", "recruiting", "Firmen-Rahmen fürs ganze Team", "Firmenfarben · Logo · ein Link für alle", 4);
 
 // App-Icons
