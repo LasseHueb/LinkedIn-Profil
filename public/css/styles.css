@@ -496,3 +496,20 @@ a:hover { color: var(--accent-hover); }
 .segmented-wrap label { flex: 1 1 auto; }
 .field-note { margin: 8px 0 0; padding: 8px 12px; border-radius: 8px; font-size: .875rem; background: var(--surface-2); color: var(--text); }
 .is-replaced input[type="text"] { opacity: .55; cursor: not-allowed; text-decoration: line-through; }
+
+/* Eigene Vorlagen */
+.own-templates { margin: 6px 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.own-list { display: grid; gap: 10px; margin: 8px 0 0; padding: 0; list-style: none; }
+.own-item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.own-item .own-preset { flex: 1 1 200px; flex-direction: row; justify-content: flex-start; gap: 12px; text-align: left; min-width: 0; }
+.own-item .own-preset span { overflow-wrap: anywhere; }
+.own-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.own-actions .text-button { font-size: .875rem; }
+.text-button.danger { color: #c62828; }
+:root[data-theme="dark"] .text-button.danger { color: #ff8a80; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .text-button.danger { color: #ff8a80; } }
+.own-save { margin-top: 12px; }
+.own-save label { display: block; font-weight: 700; font-size: .925rem; margin-bottom: 6px; }
+.inline-row, .own-rename { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.inline-row input, .own-rename input { flex: 1 1 180px; min-width: 0; }
+.own-rename { flex: 1 1 100%; }

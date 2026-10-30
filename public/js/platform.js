@@ -17,7 +17,14 @@ window.PBG = window.PBG || {};
   PBG.storage = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* blockiert */ } },
-    remove: function (k) { try { localStorage.removeItem(k); } catch (e) { /* blockiert */ } }
+    remove: function (k) { try { localStorage.removeItem(k); } catch (e) { /* blockiert */ } },
+    /** Wie set, meldet aber den Grund eines Fehlers: null = gespeichert, "full" = Speicher voll, "blocked" = gesperrt. */
+    trySet: function (k, v) {
+      try { localStorage.setItem(k, v); return null; } catch (e) {
+        var full = e && (e.name === "QuotaExceededError" || e.name === "NS_ERROR_DOM_QUOTA_REACHED" || e.code === 22 || e.code === 1014);
+        return full ? "full" : "blocked";
+      }
+    }
   };
 
   // ---------- Farbschema-Schalter (alle Seiten) ----------

@@ -35,6 +35,8 @@
     zoom: $("zoom"), resetCrop: $("reset-crop"), removePhoto: $("remove-photo"),
     presets: $("presets"),
     text: $("text"), textReplaced: $("text-replaced"), font: $("font"), bold: $("bold"), uppercase: $("uppercase"),
+    ownList: $("own-list"), ownEmpty: $("own-empty"), ownSaveForm: $("own-save-form"), ownName: $("own-name"),
+    ownImport: $("own-import"), ownStatus: $("own-status"),
     logoInput: $("logo-input"), logoRemove: $("logo-remove"), logoStatus: $("logo-status"), logoSettings: $("logo-settings"),
     icon: $("icon"), iconPos: $("iconPos"), emojiRow: $("emoji-row"),
     gradient: $("gradient"), ringColor2Field: $("ringColor2-field"),
@@ -404,7 +406,7 @@
       var s = Object.assign({ zoom: 1, offsetX: 0, offsetY: 0 }, presetState(p));
       ensureFont(s).then(function () { PBG.render(c.getContext("2d"), s, null, size); });
     }
-    var btns = document.querySelectorAll(".preset");
+    var btns = els.presets.querySelectorAll(".preset");
     // Vorschaubilder erst zeichnen, wenn sie sichtbar werden (schnellerer Seitenaufbau)
     if (window.IntersectionObserver) {
       if (thumbObserver) thumbObserver.disconnect();
@@ -444,6 +446,289 @@
   function markPreset() {
     document.querySelectorAll(".preset").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.dataset.key === activePreset));
+    });
+  }
+
+  // ---------- Eigene Vorlagen: nur im lokalen Speicher dieses Browsers, nie mit Foto ----------
+  var OWN_KEY = "rl-own-templates";
+  var OWN_MAX = 50;
+  var OWN_FILE_MAX = 1024 * 1024;   // Import-Dateien höchstens 1 MB
+  var OWN_FORMAT = "ringlabel-vorlage";
+  var NAME_MAX = 40;
+  /** Erlaubte Bereiche (wie die Regler im Editor) – gilt für gespeicherte und importierte Vorlagen. */
+  var RANGES = { size: [35, 95], spacing: [-5, 50], textPos: [-90, 90], ringWidth: [8, 32], ringLength: [180, 350],
+    ringRotation: [-90, 90], fade: [0, 70], opacity: [40, 100], logoSize: [40, 100] };
+  var CHOICES = { iconPos: ["start", "end", "both"], logoPos: ["start", "end", "replace"] };
+  var LOGO_DATA_URL = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/]+={0,2}$/;
+
+  var ownTemplates = [];
+  var ownLogoImages = {};   // id → dekodiertes Logo (für Vorschaubilder und Anwenden)
+
+  /** Prüft einen einzelnen Design-Wert. Gibt den bereinigten Wert oder undefined zurück. */
+  function validValue(k, v) {
+    if (RANGES[k]) return typeof v === "number" && isFinite(v) && v >= RANGES[k][0] && v <= RANGES[k][1] ? v : undefined;
+    if (CHOICES[k]) return CHOICES[k].indexOf(v) >= 0 ? v : undefined;
+    if (COLOR_KEYS.indexOf(k) >= 0) return typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : undefined;
+    if (k === "bold" || k === "uppercase" || k === "gradient") return typeof v === "boolean" ? v : undefined;
+    if (k === "text") return typeof v === "string" && v.length <= 60 ? v : undefined;
+    if (k === "font") return typeof v === "string" && PBG.fontById(v).id === v ? v : undefined;
+    if (k === "icon") return v === "" || (typeof v === "string" && PBG.ICONS.some(function (ic) { return ic.id === v; })) ? v : undefined;
+    return undefined;
+  }
+
+  /**
+   * Prüft eine Vorlage streng: nur bekannte Schlüssel, Werte im erlaubten Bereich, Logo nur als PNG/JPEG/WebP-Data-URL.
+   * Gibt { template, dropped[] } zurück oder null, wenn gar kein gültiges Design enthalten ist.
+   */
+  function validateTemplate(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    var dropped = [];
+    Object.keys(raw).forEach(function (k) {
+      if (["format", "version", "id", "name", "design", "logo", "created"].indexOf(k) < 0) dropped.push(k);
+    });
+    var d = raw.design;
+    if (!d || typeof d !== "object" || Array.isArray(d)) return null;
+    var design = {};
+    Object.keys(d).forEach(function (k) {
+      if (PBG.DESIGN_KEYS.indexOf(k) < 0) { dropped.push(k); return; }
+      var v = validValue(k, d[k]);
+      if (v === undefined) dropped.push(k); else design[k] = v;
+    });
+    if (!Object.keys(design).length) return null;
+    var logoUrl = null;
+    if (raw.logo != null && raw.logo !== "") {
+      if (typeof raw.logo === "string" && raw.logo.length <= OWN_FILE_MAX * 1.4 && LOGO_DATA_URL.test(raw.logo)) logoUrl = raw.logo;
+      else dropped.push("logo");
+    }
+    var name = typeof raw.name === "string" ? raw.name.trim().slice(0, NAME_MAX) : "";
+    return {
+      template: {
+        id: typeof raw.id === "string" && /^[a-z0-9-]{1,40}$/.test(raw.id) ? raw.id : newId(),
+        name: name || t("own.unnamed"),
+        design: design,
+        logo: logoUrl,
+        created: typeof raw.created === "number" && isFinite(raw.created) ? raw.created : Date.now()
+      },
+      dropped: dropped
+    };
+  }
+
+  function newId() {
+    return "v" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function loadOwnTemplates() {
+    var list = [];
+    try { list = JSON.parse(PBG.storage.get(OWN_KEY) || "[]"); } catch (e) { list = []; }
+    if (!Array.isArray(list)) list = [];
+    ownTemplates = list.map(function (raw) { var r = validateTemplate(raw); return r && r.template; }).filter(Boolean).slice(0, OWN_MAX);
+  }
+
+  /** Speichert die Liste; gibt null oder eine Fehlermeldung zurück. */
+  function persistOwnTemplates() {
+    var err = PBG.storage.trySet(OWN_KEY, JSON.stringify(ownTemplates));
+    return err === "full" ? t("own.errorFull") : err === "blocked" ? t("own.errorBlocked") : null;
+  }
+
+  function currentTemplate(name) {
+    var design = {};
+    PBG.DESIGN_KEYS.forEach(function (k) { design[k] = state[k]; });
+    return { id: newId(), name: name, design: design, logo: logo ? logoDataUrl : null, created: Date.now() };
+  }
+
+  /** Dekodiert das Logo einer Vorlage (Data-URL) zu einem Bild; Ergebnis wird zwischengespeichert. */
+  function templateLogo(tpl) {
+    if (!tpl.logo) return Promise.resolve(null);
+    if (!ownLogoImages[tpl.id]) {
+      ownLogoImages[tpl.id] = new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { reject(new Error("logo")); };
+        img.src = tpl.logo;
+      });
+    }
+    return ownLogoImages[tpl.id];
+  }
+
+  function applyOwnTemplate(tpl) {
+    var keep = { zoom: state.zoom, offsetX: state.offsetX, offsetY: state.offsetY, bg: state.bg, exportSize: state.exportSize };
+    var s0 = {};
+    PBG.DESIGN_KEYS.forEach(function (k) { s0[k] = PBG.DEFAULTS[k]; });
+    Object.assign(state, s0, tpl.design, keep);
+    activePreset = "own:" + tpl.id;
+    templateLogo(tpl).then(function (img) {
+      if (img) setLogoCanvas(toLogoCanvas(img, false)); else clearLogo();
+    }).catch(clearLogo).then(function () {
+      syncControls();
+      markPreset();
+      requestRender();
+    });
+  }
+
+  function ownMsg(msg, isError) { setStatus(els.ownStatus, msg, isError); }
+
+  function slug(name) {
+    return (name.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/ß/g, "ss")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "vorlage").slice(0, 40);
+  }
+
+  function exportOwnTemplate(tpl) {
+    var data = { format: OWN_FORMAT, version: 1, name: tpl.name, design: tpl.design, logo: tpl.logo || null };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "ringlabel-vorlage-" + slug(tpl.name) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    ownMsg(t("own.exported", { name: tpl.name }));
+  }
+
+  function importOwnTemplate(file) {
+    if (!file) return;
+    if (file.size > OWN_FILE_MAX) { ownMsg(t("own.errorFileSize"), true); return; }
+    if (file.type && !/json/.test(file.type) && !/\.json$/i.test(file.name || "")) { ownMsg(t("own.errorFileType"), true); return; }
+    if (ownTemplates.length >= OWN_MAX) { ownMsg(t("own.limit", { max: OWN_MAX }), true); return; }
+    var reader = new FileReader();
+    reader.onerror = function () { ownMsg(t("own.errorFile"), true); };
+    reader.onload = function () {
+      var raw;
+      try { raw = JSON.parse(String(reader.result)); } catch (e) { ownMsg(t("own.errorFile"), true); return; }
+      var r = validateTemplate(raw);
+      if (!r || raw.format !== OWN_FORMAT) { ownMsg(t("own.errorFile"), true); return; }
+      var tpl = r.template;
+      tpl.id = newId();
+      var check = templateLogo(tpl).then(function () { return true; }, function () {
+        // Data-URL sieht gültig aus, lässt sich aber nicht als Bild öffnen
+        delete ownLogoImages[tpl.id];
+        tpl.logo = null;
+        r.dropped.push("logo");
+        return true;
+      });
+      check.then(function () {
+        ownTemplates.unshift(tpl);
+        var err = persistOwnTemplates();
+        if (err) { ownTemplates.shift(); ownMsg(err, true); return; }
+        renderOwnList();
+        applyOwnTemplate(tpl);
+        var msg = t("own.imported", { name: tpl.name });
+        if (r.dropped.length) msg += " " + t("own.importDropped", { fields: r.dropped.join(", ") });
+        ownMsg(msg, r.dropped.length > 0);
+      });
+    };
+    reader.readAsText(file);
+  }
+
+  function smallButton(label, cls, onClick) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "text-button " + (cls || "");
+    b.textContent = label;
+    b.addEventListener("click", onClick);
+    return b;
+  }
+
+  function startRename(li, tpl) {
+    var form = document.createElement("form");
+    form.className = "own-rename";
+    var input = document.createElement("input");
+    input.type = "text";
+    input.maxLength = NAME_MAX;
+    input.value = tpl.name;
+    input.setAttribute("aria-label", t("own.renameLabel", { name: tpl.name }));
+    var ok = document.createElement("button");
+    ok.type = "submit";
+    ok.className = "btn btn-secondary";
+    ok.textContent = t("own.renameSave");
+    var cancel = smallButton(t("own.renameCancel"), "", function () { renderOwnList(); });
+    form.appendChild(input); form.appendChild(ok); form.appendChild(cancel);
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = input.value.trim().slice(0, NAME_MAX);
+      if (!name) { ownMsg(t("own.nameMissing"), true); input.focus(); return; }
+      var old = tpl.name;
+      tpl.name = name;
+      var err = persistOwnTemplates();
+      if (err) { tpl.name = old; ownMsg(err, true); return; }
+      renderOwnList();
+      ownMsg(t("own.renamed", { name: name }));
+    });
+    li.querySelector(".own-actions").replaceWith(form);
+    input.focus();
+    input.select();
+  }
+
+  function renderOwnList() {
+    var list = els.ownList;
+    list.innerHTML = "";
+    els.ownEmpty.hidden = ownTemplates.length > 0;
+    var dpr = Math.min(window.devicePixelRatio || 1, 3);
+    var size = Math.round(56 * dpr);
+    ownTemplates.forEach(function (tpl) {
+      var li = document.createElement("li");
+      li.className = "own-item";
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "preset own-preset";
+      btn.dataset.key = "own:" + tpl.id;
+      btn.setAttribute("aria-pressed", "false");
+      btn.setAttribute("aria-label", t("own.apply", { name: tpl.name }));
+      var c = document.createElement("canvas");
+      c.setAttribute("aria-hidden", "true");
+      c.width = c.height = size;
+      var label = document.createElement("span");
+      label.textContent = tpl.name;
+      btn.appendChild(c);
+      btn.appendChild(label);
+      btn.addEventListener("click", function () { applyOwnTemplate(tpl); });
+      var s = Object.assign({ zoom: 1, offsetX: 0, offsetY: 0 }, PBG.DEFAULTS, tpl.design);
+      Promise.all([ensureFont(s), templateLogo(tpl).catch(function () { return null; })]).then(function (r) {
+        PBG.render(c.getContext("2d"), s, null, size, { logo: r[1] || null });
+      });
+      var actions = document.createElement("div");
+      actions.className = "own-actions";
+      actions.appendChild(smallButton(t("own.rename"), "", function () { startRename(li, tpl); }));
+      actions.appendChild(smallButton(t("own.export"), "", function () { exportOwnTemplate(tpl); }));
+      actions.appendChild(smallButton(t("own.delete"), "danger", function () {
+        if (!window.confirm(t("own.confirmDelete", { name: tpl.name }))) return;
+        var idx = ownTemplates.indexOf(tpl);
+        ownTemplates.splice(idx, 1);
+        var err = persistOwnTemplates();
+        if (err) { ownTemplates.splice(idx, 0, tpl); ownMsg(err, true); return; }
+        delete ownLogoImages[tpl.id];
+        if (activePreset === "own:" + tpl.id) activePreset = null;
+        renderOwnList();
+        ownMsg(t("own.deleted", { name: tpl.name }));
+      }));
+      li.appendChild(btn);
+      li.appendChild(actions);
+      list.appendChild(li);
+    });
+    markPreset();
+  }
+
+  function bindOwnTemplates() {
+    loadOwnTemplates();
+    renderOwnList();
+    els.ownSaveForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = els.ownName.value.trim().slice(0, NAME_MAX);
+      if (!name) { ownMsg(t("own.nameMissing"), true); els.ownName.focus(); return; }
+      if (ownTemplates.length >= OWN_MAX) { ownMsg(t("own.limit", { max: OWN_MAX }), true); return; }
+      var tpl = currentTemplate(name);
+      ownTemplates.unshift(tpl);
+      var err = persistOwnTemplates();
+      if (err) { ownTemplates.shift(); ownMsg(err, true); return; }
+      activePreset = "own:" + tpl.id;
+      els.ownName.value = "";
+      renderOwnList();
+      ownMsg(t("own.saved", { name: name }));
+    });
+    els.ownImport.addEventListener("change", function () {
+      importOwnTemplate(els.ownImport.files && els.ownImport.files[0]);
+      els.ownImport.value = "";
     });
   }
 
@@ -890,6 +1175,7 @@
     bindExport();
     bindShareDialog();
     buildPresets();
+    bindOwnTemplates();
     bindPresetButtons();
     applyPreset(initialPreset());
 
@@ -899,7 +1185,7 @@
     if (window.matchMedia) {
       var mq = function () {
         var m = window.matchMedia("(resolution: " + (window.devicePixelRatio || 1) + "dppx)");
-        var onChange = function () { requestRender(); renderPresetThumbs(); mq(); };
+        var onChange = function () { requestRender(); renderPresetThumbs(); renderOwnList(); mq(); };
         if (m.addEventListener) m.addEventListener("change", onChange, { once: true });
       };
       mq();
