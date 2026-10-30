@@ -3,7 +3,7 @@
   "edition": "free",
   "_hinweis_edition": "\"free\" = nur kostenloser Editor ohne Backend (Premium/Firmen-Pakete ausgeblendet), \"full\" = alles. Per Umgebungsvariable EDITION überschreibbar.",
   "appName": "RingLabel",
-  "siteUrl": "https://lassehueb.github.io/LinkedIn-Profil",
+  "siteUrl": "https://lassehueb.github.io/ringlabel",
   "basePath": "",
   "defaultLocale": "de",
   "twitterHandle": "",

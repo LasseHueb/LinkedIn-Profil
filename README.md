@@ -1,10 +1,10 @@
 # RingLabel – Profilbild-Rahmen mit eigenem Text
 
-Web-App für runde Profilbild-Rahmen wie „Open to Work“ oder „Hiring“, aber mit freiem Text und Design. Dazu kommen virale Verbreitung, SEO-Landingpages, Premium (Einmalkauf) und Firmen-Pakete.
+Web-App für runde Profilbild-Rahmen mit eigenem Text und Design. Dazu kommen virale Verbreitung, SEO-Landingpages, Premium (Einmalkauf) und Firmen-Pakete.
 
 **Grundprinzip:** Fotos werden ausschließlich im Browser verarbeitet und **nie** hochgeladen. Das Backend speichert nur Lizenzen, Firmen-Konten und Rahmen-Einstellungen.
 
-> Name, Adresse (vorerst `https://lassehueb.github.io/LinkedIn-Profil`) und Preise stehen zentral in `config/site.json`. Die Angaben für Impressum und Datenschutz der kostenlosen Edition stehen dort unter `legal`.
+> Name, Adresse (vorerst `https://lassehueb.github.io/ringlabel`) und Preise stehen zentral in `config/site.json`. Die Angaben für Impressum und Datenschutz der kostenlosen Edition stehen dort unter `legal`.
 
 > **Edition:** Standardmäßig wird die **kostenlose Version** gebaut (`"edition": "free"`): nur der Editor, ohne Backend, ohne Premium und ohne Firmen-Pakete. Mit `EDITION=full` ist alles wieder da – siehe [Editionen: free und full](#editionen-free-und-full).
 
@@ -33,7 +33,7 @@ Web-App für runde Profilbild-Rahmen wie „Open to Work“ oder „Hiring“, a
 | Bereich | Was es gibt |
 |---|---|
 | **Editor** | Upload (JPG/PNG/WebP/HEIC), Zuschnitt, gebogener Text, Farben, Ring-Form, Live-Vorschau + Feed-Miniatur, PNG-Export |
-| **Verbreitung** | Kleiner Hinweis „Erstellt mit …“ im Gratis-Export · Teilen-Dialog nach dem Download (LinkedIn, WhatsApp, X, Link kopieren, Web-Share-API) · eigener Link je Vorlage (`/vorlage/jobsuche/`) mit eigenem Vorschaubild |
+| **Verbreitung** | Kleiner Hinweis „Erstellt mit …“ im Gratis-Export · Teilen-Dialog nach dem Download (Link kopieren, Teilen-Funktion des Geräts per Web-Share-API) · eigener Link je Vorlage (`/vorlage/jobsuche/`) mit eigenem Vorschaubild |
 | **SEO** | Startseite + 6 Landingpages (`/rahmen/jobsuche/`, `/rahmen/recruiting/`, `/rahmen/freelancer/`, `/rahmen/selbststaendig/`, `/rahmen/mentoring/`, `/rahmen/ehrenamt/`) mit H1, Text, Beispielbildern, FAQ, eingebettetem Editor · Meta-Titles/-Descriptions · Open-Graph-Bilder · `sitemap.xml` · `robots.txt` · strukturierte Daten (WebApplication, FAQPage, Breadcrumb, Product, Service) |
 | **Premium** (einmalig) | Kein Hinweis im Bild · Farbverläufe · 5 zusätzliche Schriften · 23 Premium-Vorlagen · Symbole & Emojis im Ring · Export 2048 px. Gesperrte Elemente sind sichtbar und tragen ein „PRO“-Schild bzw. Schloss mit Upgrade-Dialog. Kauf über Stripe Checkout, Freischaltung per Lizenzschlüssel oder Magic-Link, ohne Passwort |
 | **Firmen-Pakete** | Seite „Für Unternehmen“ mit Preisen & Kontaktformular · Admin-Bereich (`/admin/`, Login per Magic-Link) · Rahmen in Firmenfarben, Text, Logo, Sperre · Team-Link `/team/<name>` · Download-Zähler · Stripe-Abo + Kundenportal |
@@ -189,7 +189,7 @@ Ohne Cookies ist kein Cookie-Banner nötig. Gezählt werden Seitenaufrufe sowie 
 - **Plausible** (EU-Hosting): `ANALYTICS_PROVIDER=plausible`, `ANALYTICS_SRC=https://plausible.io/js/script.js`, `ANALYTICS_DOMAIN=deine-domain.de`. In Plausible unter *Goals* die Ereignisnamen als Custom Events anlegen.
 - **Umami** (selbst gehostet oder Cloud): `ANALYTICS_PROVIDER=umami`, `ANALYTICS_SRC=https://<dein-umami>/script.js`, `ANALYTICS_WEBSITE_ID=<id>`
 
-Die UTM-Parameter der Teilen-Links (`utm_source=linkedin|whatsapp|x|link`) zeigen dir, welcher Kanal Besucher:innen bringt.
+Die UTM-Parameter der geteilten Links (`utm_source=link` für „Link kopieren“, `utm_source=native` für die Teilen-Funktion des Geräts) zeigen dir, welcher Weg Besucher:innen bringt.
 
 ## Deployment
 
@@ -208,7 +208,7 @@ Die UTM-Parameter der Teilen-Links (`utm_source=linkedin|whatsapp|x|link`) zeige
 Der Workflow `.github/workflows/pages.yml` baut bei jedem Push auf `main`, prüft das Ergebnis mit `scripts/check-dist.mjs` und veröffentlicht es.
 
 1. *Settings → Pages → Source: GitHub Actions*
-2. Fertig – ohne weitere Variablen läuft die **kostenlose Edition** unter `https://<name>.github.io/LinkedIn-Profil/`. Der Unterordner wird automatisch als `BASE_PATH` gesetzt (Links, Bilder, Canonical, OG-Bilder, Sitemap).
+2. Fertig – ohne weitere Variablen läuft die **kostenlose Edition** unter `https://<name>.github.io/ringlabel/`. Der Unterordner wird automatisch als `BASE_PATH` gesetzt (Links, Bilder, Canonical, OG-Bilder, Sitemap).
 3. Optional unter *Settings → Secrets and variables → Actions → Variables*:
    - `SITE_URL` mit eigener Domain (z. B. `https://www.deine-domain.de`): dann bleibt `BASE_PATH` leer. Die Domain zusätzlich unter *Settings → Pages → Custom domain* eintragen.
    - `EDITION=full` plus `SUPABASE_URL`, `SUPABASE_ANON_KEY` für die Vollversion. Team-Links funktionieren dort über eine Weiterleitung in der `404.html`.
