@@ -4,6 +4,3 @@ dist/
 *.log
 .env
 .env.*
-supabase/.temp/
-supabase/.branches/
-!supabase/functions/.env.example
