@@ -5,7 +5,7 @@
  * WICHTIG: Vorlagen mit Platzhaltern – vor dem Livegang ausfüllen und rechtlich prüfen lassen
  * (z. B. über einen Generator wie e-recht24 oder eine Anwaltskanzlei). Keine Rechtsberatung.
  */
-import { page, esc } from "../layout.mjs";
+import { page, esc, independenceNote } from "../layout.mjs";
 
 const P = (s) => `<span class="placeholder">[${s}]</span>`;
 
@@ -41,7 +41,7 @@ export default function pages(ctx) {
     <h2>Verbraucherstreitbeilegung</h2>
     <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
     <h2>Hinweis</h2>
-    <p>${app} ist ein unabhängiges Angebot und steht in keiner Verbindung zu LinkedIn, Xing, Instagram, WhatsApp oder anderen Netzwerken. Genannte Marken gehören ihren jeweiligen Inhabern.</p>`;
+    <p>${independenceNote(ctx)}</p>`;
 
   // ---------- Kostenlose Edition: privates, nicht-kommerzielles Projekt (Angaben aus config/site.json → legal) ----------
   const L = ctx.cfg.legal || {};
@@ -55,8 +55,9 @@ export default function pages(ctx) {
     <p>E-Mail: ${mail}</p>
     <h2>Hinweis</h2>
     <p>${app} ist ein privates, nicht-kommerzielles Projekt. Die Nutzung ist kostenlos, es werden keine Waren oder Dienstleistungen verkauft.</p>
+    <p>${independenceNote(ctx)}</p>
     <h2>Haftung für Links</h2>
-    <p>Diese Website enthält Links zu externen Websites Dritter (z. B. LinkedIn, WhatsApp, X), auf deren Inhalte ich keinen Einfluss habe. Für diese Inhalte ist der jeweilige Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich solche Links umgehend.</p>`;
+    <p>Diese Website enthält Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. Für diese Inhalte ist der jeweilige Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich solche Links umgehend.</p>`;
 
   // Muss zur Technik passen: localStorage-Schlüssel siehe public/js/platform.js (pbg-theme) und app.js (pbg-share-dismissed);
   // keine Cookies, keine Anfragen an fremde Server (prüft scripts/check-dist.mjs).
@@ -86,7 +87,7 @@ export default function pages(ctx) {
     <p>Diese Website setzt keine Cookies und verwendet keine Analyse- oder Tracking-Dienste. Alle Schriftarten und Skripte werden direkt von dieser Website geladen, nicht von Drittanbietern.</p>
 
     <h2>6. Teilen-Funktion</h2>
-    <p>Nach dem Download kannst du die App über Schaltflächen für LinkedIn, WhatsApp oder X weiterempfehlen. Diese Schaltflächen sind einfache Links: Erst wenn du darauf klickst, wird die jeweilige Plattform aufgerufen, und es gelten deren Datenschutzbestimmungen. Vorher werden keine Daten an diese Anbieter übertragen. „Link kopieren“ und die Teilen-Funktion deines Geräts arbeiten lokal.</p>
+    <p>Nach dem Download kannst du die App mit „Link kopieren“ oder über die Teilen-Funktion deines Geräts weiterempfehlen. Beides arbeitet lokal: Der Link wird in deine Zwischenablage kopiert bzw. an das Teilen-Menü deines Geräts übergeben. Dabei werden keine Daten an mich oder an Dritte übertragen.</p>
 
     <h2>7. Kontakt per E-Mail</h2>
     <p>Wenn du mir eine E-Mail schreibst, verarbeite ich deine Angaben nur, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. f DSGVO). Die E-Mail lösche ich, sobald sie erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
