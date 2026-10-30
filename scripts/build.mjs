@@ -109,7 +109,7 @@ writeFileSync(join(dist, "404.html"), `<!doctype html>
     var base = ${JSON.stringify(cfg.basePath)};
     var path = location.pathname;
     if (path.indexOf(base + "/") !== 0) return;
-    var m = path.slice(base.length).match(/^\/(rahmen|vorlage|premium|unternehmen|admin|team)(?:\/([a-z0-9-]*))?/);
+    var m = path.slice(base.length).match(/^\\/(rahmen|vorlage|premium|unternehmen|admin|team)(?=\\/|$)(?:\\/([a-z0-9-]*))?/);
     if (!m) return;
     var preset = (m[1] === "rahmen" || m[1] === "vorlage") && m[2] ? "?vorlage=" + m[2] : "";
     location.replace(base + "/" + preset);
