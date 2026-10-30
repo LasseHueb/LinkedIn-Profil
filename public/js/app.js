@@ -27,7 +27,7 @@
   var lastInfo = { scale: 1, overflow: false };
 
   var els = {
-    preview: $("preview"), stage: $("stage"), mini: $("mini"), miniXs: $("mini-xs"),
+    preview: $("preview"), stage: $("stage"),
     fileInput: $("file-input"), dropzone: $("dropzone"), uploadStatus: $("upload-status"),
     zoom: $("zoom"), resetCrop: $("reset-crop"), removePhoto: $("remove-photo"),
     presets: $("presets"),
@@ -135,9 +135,6 @@
     var s = renderState();
     var size = sizeCanvas(els.preview);
     lastInfo = PBG.render(els.preview.getContext("2d"), s, photo, size, renderOpts());
-    [els.mini, els.miniXs].forEach(function (c) {
-      PBG.render(c.getContext("2d"), s, photo, sizeCanvas(c), renderOpts());
-    });
     updateWarnings();
     els.preview.setAttribute("aria-label", t("preview.canvasLabel", { text: state.text || "–" }));
   }

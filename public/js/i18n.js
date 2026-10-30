@@ -17,9 +17,6 @@ PBG.I18N = {
 
     "preview.canvasLabel": "Vorschau des Profilbilds mit Ring. Text: {text}. Mit Pfeiltasten verschieben, mit Plus und Minus zoomen.",
     "preview.hint": "Ziehen zum Verschieben · Mausrad, Pinch oder +/− zum Zoomen · Pfeiltasten verschieben",
-    "preview.mini": "So wirkt es im Feed",
-    "preview.miniName": "Dein Name",
-    "preview.miniMeta": "Deine Position · gerade eben",
 
     "upload.heading": "1. Foto",
     "upload.drop": "Foto hierher ziehen oder",
@@ -108,9 +105,6 @@ PBG.I18N = {
 
     "preview.canvasLabel": "Preview of the profile picture with ring. Text: {text}. Use arrow keys to move, plus and minus to zoom.",
     "preview.hint": "Drag to move · scroll wheel, pinch or +/− to zoom · arrow keys move",
-    "preview.mini": "How it looks in the feed",
-    "preview.miniName": "Your Name",
-    "preview.miniMeta": "Your position · just now",
 
     "upload.heading": "1. Photo",
     "upload.drop": "Drop a photo here or",
