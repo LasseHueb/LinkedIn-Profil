@@ -36,11 +36,11 @@ export default function pages(ctx) {
     <h2>Haftung für Links</h2>
     <p>Diese Website enthält Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. Für diese Inhalte ist der jeweilige Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich solche Links umgehend.</p>`;
 
-  // Muss zur Technik passen: localStorage-Schlüssel siehe public/js/platform.js (pbg-theme) und app.js (pbg-share-dismissed);
-  // keine Cookies, keine Anfragen an fremde Server (prüft scripts/check-dist.mjs).
+  // Muss zur Technik passen: localStorage-Schlüssel siehe public/js/platform.js (pbg-theme) und app.js
+  // (rl-own-templates, pbg-share-dismissed); keine Cookies, keine Anfragen an fremde Server (prüft scripts/check-dist.mjs).
   const datenschutz = `
     <h2>Das Wichtigste in Kürze</h2>
-    <p>Deine Fotos verlassen nie deinen Browser. Die Bearbeitung und der Export finden vollständig auf deinem Gerät statt. Es gibt keine Benutzerkonten, keine Cookies, kein Tracking und keine Werbung.</p>
+    <p>Deine Fotos und Logos verlassen nie deinen Browser. Die Bearbeitung und der Export finden vollständig auf deinem Gerät statt. Es gibt keine Benutzerkonten, keine Cookies, kein Tracking und keine Werbung.</p>
 
     <h2>1. Verantwortlicher</h2>
     <p>${esc(L.name)}, ${esc(L.street)}, ${esc(L.city)}, ${esc(L.country)}<br>E-Mail: ${mail}</p>
@@ -49,16 +49,18 @@ export default function pages(ctx) {
     <p>Diese Website wird über GitHub Pages bereitgestellt, einen Dienst der GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. Beim Aufruf der Seite verarbeitet GitHub technisch notwendige Daten wie deine IP-Adresse, Datum und Uhrzeit des Zugriffs, die aufgerufene Seite sowie Browser- und Betriebssystem-Informationen, um die Seite auszuliefern und vor Missbrauch zu schützen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; mein berechtigtes Interesse liegt in der sicheren und zuverlässigen Bereitstellung der Website.</p>
     <p>Dabei können Daten in die USA übermittelt werden. GitHub ist unter dem EU-US Data Privacy Framework zertifiziert; ergänzend gelten die EU-Standardvertragsklauseln. Weitere Informationen: <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement</a></p>
 
-    <h2>3. Verarbeitung deiner Fotos</h2>
-    <p>Hochgeladene Fotos werden ausschließlich lokal in deinem Browser verarbeitet. Sie werden weder an mich noch an GitHub oder andere Dritte übertragen und nicht gespeichert. Sobald du die Seite schließt, sind sie aus dem Speicher entfernt.</p>
+    <h2>3. Verarbeitung deiner Fotos und Logos</h2>
+    <p>Fotos und Logos, die du auswählst, werden ausschließlich lokal in deinem Browser verarbeitet. Sie werden weder an mich noch an GitHub oder andere Dritte übertragen. Fotos werden nicht gespeichert: Sobald du die Seite schließt, sind sie aus dem Speicher entfernt. Ein Logo wird nur dann gespeichert, wenn du es selbst als Teil einer eigenen Vorlage sicherst (siehe Abschnitt 4). Logos werden auch nicht in geteilte Links übernommen.</p>
 
     <h2>4. Lokaler Speicher im Browser</h2>
-    <p>Damit die App sich bestimmte Einstellungen merken kann (z. B. „Nicht mehr anzeigen“ beim Teilen-Hinweis), speichert sie kleine Werte im lokalen Speicher deines Browsers (localStorage). Diese Daten bleiben auf deinem Gerät und werden nicht übertragen. Die Speicherung ist für die von dir gewünschte Funktion unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst sie jederzeit über die Einstellungen deines Browsers löschen.</p>
-    <p>Genutzt werden genau zwei Einträge, und zwar erst, wenn du die jeweilige Einstellung änderst:</p>
+    <p>Eigene Vorlagen (inklusive eines Logos) und deine Farbschema-Einstellung werden nur auf deinem Gerät im lokalen Speicher deines Browsers (localStorage) abgelegt – und nur dann, wenn du das selbst auslöst, zum Beispiel mit „Als eigene Vorlage speichern“. Diese Daten werden nicht übertragen, weder an mich noch an Dritte. Die Speicherung ist für die von dir gewünschte Funktion unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).</p>
+    <p>Genutzt werden genau diese Einträge:</p>
     <ul>
+      <li><code>rl-own-templates</code>: deine eigenen Vorlagen mit Name, Design-Einstellungen und gegebenenfalls Logo – niemals dein Foto</li>
       <li><code>pbg-theme</code>: dein gewähltes Farbschema (System, Hell oder Dunkel)</li>
       <li><code>pbg-share-dismissed</code>: dass du „Nicht mehr anzeigen“ beim Teilen-Hinweis angehakt hast</li>
     </ul>
+    <p>Löschen kannst du eigene Vorlagen jederzeit direkt auf der Seite unter „Meine Vorlagen“ oder alles zusammen über die Einstellungen deines Browsers (Websitedaten löschen). Exportierst du eine Vorlage als Datei, entsteht diese Datei auf deinem Gerät; an wen du sie weitergibst, entscheidest du selbst.</p>
 
     <h2>5. Keine Cookies, kein Tracking</h2>
     <p>Diese Website setzt keine Cookies und verwendet keine Analyse- oder Tracking-Dienste. Alle Schriftarten und Skripte werden direkt von dieser Website geladen, nicht von Drittanbietern.</p>

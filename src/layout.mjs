@@ -23,10 +23,10 @@ export function fill(ctx, s) {
 
 /**
  * Unabhängigkeitshinweis – die einzige Stelle, an der ein soziales Netzwerk namentlich genannt wird (Footer und Impressum).
- * scripts/check-dist.mjs lässt nur Zeilen mit „in keiner Verbindung zu“ durch.
+ * Muss in einer Zeile stehen: scripts/check-dist.mjs lässt nur Zeilen mit „in keiner Verbindung zu“ durch.
  */
 export function independenceNote(ctx) {
-  return `${esc(ctx.cfg.appName)} ist ein unabhängiges Angebot und steht in keiner Verbindung zu LinkedIn, Xing oder anderen sozialen Netzwerken. Alle genannten Marken gehören ihren jeweiligen Inhabern.`;
+  return `${esc(ctx.cfg.appName)} ist ein unabhängiges Angebot. Es steht in keiner Verbindung zu LinkedIn, XING oder anderen sozialen Netzwerken und wird von ihnen weder betrieben noch unterstützt. LinkedIn und XING sind Marken ihrer jeweiligen Inhaber.`;
 }
 
 export function editor(ctx) {
