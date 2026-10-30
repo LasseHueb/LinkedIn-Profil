@@ -4,6 +4,8 @@
  *   - alle internen Links und Ressourcen (href, src, content, Sitemap, Manifest, CSS-url()) zeigen auf existierende Dateien
  *   - alle internen URLs beginnen mit BASE_PATH (wichtig für GitHub Pages unter /<repo>/)
  *   - nirgends der alte Name „ProfilRing“ bzw. „profilring“
+ *   - keine Namen oder Rahmen-Begriffe sozialer Netzwerke (Abgrenzung); erlaubt ist nur der
+ *     Unabhängigkeitshinweis („… in keiner Verbindung zu …“, siehe independenceNote in src/layout.mjs)
  *   - Edition "free": nirgends „Premium“, „PRO“, „Unternehmen“ oder „Stripe“; kein supabase.js;
  *     Impressum und Datenschutz ohne Platzhalter oder [eckige Klammern];
  *     keine Skripte, Styles, Schriften oder Bilder von fremden Servern (die Datenschutzerklärung schließt das aus)
@@ -67,6 +69,16 @@ for (const f of files.filter((f) => !binary(f))) {
   readFileSync(f, "utf8").split("\n").forEach((line, i) => {
     const m = line.match(/profilring/i);
     if (m) errors.push(`Alter Name „${m[0]}“ in ${rel(f)}:${i + 1}`);
+  });
+}
+
+// ---------- Abgrenzung von sozialen Netzwerken ----------
+const networkTerms = /linked\s?in|open[\s-]?to[\s-]?work|opentowork|openforwork|offen\s?für\s?jobs|hiring/i;
+for (const f of files.filter((f) => !binary(f))) {
+  readFileSync(f, "utf8").split("\n").forEach((line, i) => {
+    if (line.includes("in keiner Verbindung zu")) return;
+    const m = line.match(networkTerms);
+    if (m) errors.push(`Netzwerk-Begriff „${m[0]}“ in ${rel(f)}:${i + 1}`);
   });
 }
 

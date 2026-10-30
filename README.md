@@ -65,7 +65,7 @@ src/
   pages/*.mjs             Seiten-Generatoren (core, legal, premium, business)
 scripts/
   build.mjs               Statischer Build nach dist/ (ohne Abhängigkeiten, Edition free/full)
-  check-dist.mjs          Prüft dist/: tote Links, alter Name, bei free Bezahl-Hinweise, Platzhalter, fremde Server
+  check-dist.mjs          Prüft dist/: tote Links, alter Name, Netzwerk-Begriffe, bei free Bezahl-Hinweise, Platzhalter, fremde Server
   serve.mjs               Lokaler Webserver
   render-images.mjs       Erzeugt Beispiel- und OG-Bilder mit dem echten Renderer
 supabase/
@@ -80,7 +80,7 @@ Voraussetzung: [Node.js](https://nodejs.org) ab Version 20. Weitere Pakete werde
 ```bash
 npm run dev          # kostenlose Edition bauen und http://localhost:8080 starten
 npm run dev:full     # dasselbe mit Premium und Firmen-Paketen
-npm run check        # dist/ prüfen: tote Links, BASE_PATH, alter Name; bei "free" auch Bezahl-Hinweise, Platzhalter, fremde Server
+npm run check        # dist/ prüfen: tote Links, BASE_PATH, alter Name, Netzwerk-Begriffe; bei "free" auch Bezahl-Hinweise, Platzhalter, fremde Server
 ```
 
 - Premium testen ohne Kauf (nur `dev:full`): `http://localhost:8080/?premium=dev` (funktioniert nur auf localhost; mit `?premium=off` wieder aus)
@@ -237,6 +237,7 @@ Hinweis: Unter `/<repo>/` liegt die `robots.txt` nicht im Domain-Stamm und wird 
 - [ ] nur `full`: Magic-Link-Login und Lizenz-E-Mail kommen an (Spam-Ordner prüfen)
 - [ ] Statistik zählt Downloads
 - [ ] Prüfen, dass die Marke/der App-Name keine fremden Markenrechte verletzt
+- [ ] Abgrenzung von sozialen Netzwerken: keine Netzwerk-Namen, keine Rahmen-Begriffe der Netzwerke und keine Vorlage, die deren Rahmen nachahmt (grüner oder lila Bogen unten links mit weißer Hashtag-Schrift). `npm run check` lässt den Build bei solchen Begriffen fehlschlagen; einzige Ausnahme ist der Unabhängigkeitshinweis aus `independenceNote` in `src/layout.mjs`
 
 ## Hinweise & Grenzen
 
