@@ -38,14 +38,14 @@ const ICON_SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 
 export function privacyNote() {
   return `<p class="privacy-note" role="note">
     <span class="badge">${ICON_SHIELD}<strong>Deine Fotos verlassen nie deinen Browser.</strong></span>
-    <span>Alles wird direkt auf deinem Gerät berechnet – kein Upload, keine Speicherung, keine Cookies.</span>
+    <span>Fotos und Logos werden direkt auf deinem Gerät verarbeitet – kein Upload, kein Konto, keine Cookies.</span>
   </p>`;
 }
 
 export function trustRow() {
   const check = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   return `<ul class="trust-row">
-    <li>${check}Kostenlos</li><li>${check}Ohne Anmeldung</li><li>${check}Kein Foto-Upload</li><li>${check}PNG in 1080 px</li>
+    <li>${check}Komplett kostenlos</li><li>${check}Ohne Anmeldung</li><li>${check}Kein Foto-Upload</li><li>${check}PNG bis 2048 px</li>
   </ul>`;
 }
 
@@ -81,33 +81,17 @@ export function webAppJsonLd(ctx, url) {
     inLanguage: "de",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", name: "Kostenlos", price: "0", priceCurrency: "EUR" },
-    featureList: ["Eigener Text auf dem Profilbild-Ring", "Farben und Schriftarten frei wählbar", "PNG-Export 1080 × 1080 px", "Fotos bleiben im Browser"]
+    featureList: ["Eigener Text auf dem Profilbild-Ring", "Eigenes Logo auf dem Ring", "Farben, Farbverläufe und Schriftarten frei wählbar", "Eigene Vorlagen speichern und weitergeben", "PNG-Export bis 2048 × 2048 px", "Fotos und Logos bleiben im Browser"]
   };
 }
 
-export function breadcrumbJsonLd(ctx, items) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map(([name, path], i) => ({ "@type": "ListItem", position: i + 1, name, item: ctx.abs(path) }))
-  };
-}
-
-function header(ctx, path) {
+function header(ctx) {
   const u = ctx.u;
-  const nav = [
-    ["/", "Rahmen erstellen"],
-    ["/rahmen/jobsuche/", "Jobsuche"],
-    ["/rahmen/recruiting/", "Recruiting"]
-  ];
   return `<header class="site-header">
     <a class="brand" href="${u("/")}" aria-label="${esc(ctx.cfg.appName)} – Startseite">
       <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="currentColor" stroke-width="2" opacity=".35"/><path d="M3.5 21A13.5 13.5 0 0 0 28.5 21" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg>
       <span class="brand-name">${esc(ctx.cfg.appName)}</span>
     </a>
-    <nav class="site-nav" aria-label="Hauptnavigation">
-      ${nav.map(([p, label]) => `<a href="${u(p)}"${p === path ? ' aria-current="page"' : ""}>${label}</a>`).join("\n      ")}
-    </nav>
     <div class="segmented" role="radiogroup" aria-label="Farbschema" id="theme-switch">
       <button type="button" role="radio" data-theme-value="auto" title="System" aria-checked="true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
@@ -127,15 +111,11 @@ function header(ctx, path) {
 
 function footer(ctx) {
   const u = ctx.u;
-  const links = [
-    ...ctx.landing.map((l) => [`/rahmen/${l.slug}/`, l.navLabel || l.h1]),
-  ];
   const legal = [["/impressum/", "Impressum"], ["/datenschutz/", "Datenschutz"]];
   return `<footer class="site-footer">
-    <ul class="footer-nav" aria-label="Anwendungsfälle">${links.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
     <ul class="footer-nav" aria-label="Rechtliches">${legal.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
-    <p>Deine Fotos verlassen nie deinen Browser · Keine Cookies · © ${new Date().getFullYear()} ${esc(ctx.cfg.appName)}</p>
     <p class="small">${independenceNote(ctx)}</p>
+    <p>© ${new Date().getFullYear()} ${esc(ctx.cfg.legal.name)}</p>
   </footer>`;
 }
 
@@ -194,7 +174,7 @@ export function page(ctx, opts) {
 </head>
 <body${opts.preset ? ` data-preset="${esc(opts.preset)}"` : ""}${opts.bodyClass ? ` class="${esc(opts.bodyClass)}"` : ""}>
   ${opts.editor ? '<a class="skip-link" href="#controls">Zu den Einstellungen springen</a>' : ""}
-  ${header(ctx, opts.path)}
+  ${header(ctx)}
   <main id="main">
   ${opts.main}
   </main>

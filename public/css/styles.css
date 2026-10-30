@@ -397,9 +397,6 @@ a:hover { color: var(--accent-hover); }
 /* Kopf mit Navigation */
 .brand { text-decoration: none; color: var(--text); }
 .brand-name { font-family: "Montserrat", system-ui, sans-serif; font-weight: 700; font-size: 1.2rem; }
-.site-nav { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
-.site-nav a { color: var(--text); text-decoration: none; font-weight: 700; font-size: .95rem; padding: 6px 2px; }
-.site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--accent); }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
 .narrow { max-width: 820px; }
@@ -426,24 +423,13 @@ a:hover { color: var(--accent-hover); }
 .legal h3 { font-size: 1.05rem; }
 .placeholder { background: var(--warn-bg); color: var(--warn-text); padding: 0 4px; border-radius: 4px; }
 
-.steps { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); counter-reset: step; padding: 0; list-style: none; }
-.steps li { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; counter-increment: step; }
-.steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--accent-text); font-weight: 800; margin-bottom: 8px; }
-.steps strong { display: block; margin-bottom: 4px; }
 
-.examples { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-.example { text-align: center; text-decoration: none; color: var(--text); font-weight: 700; font-size: .9rem; }
-.example img { width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; display: block; margin-bottom: 8px; transition: transform .15s; }
-.example:hover img { transform: scale(1.03); }
 
 .faq details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0 16px; margin-bottom: 10px; }
 .faq summary { cursor: pointer; font-weight: 700; padding: 14px 0; list-style-position: outside; }
 .faq details[open] summary { border-bottom: 1px solid var(--border); }
 .faq details p { margin: 12px 0 16px; }
 
-.link-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; list-style: none; }
-.link-grid a { display: inline-block; padding: 8px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); text-decoration: none; font-weight: 700; color: var(--text); }
-.link-grid a:hover { border-color: var(--accent); color: var(--accent); }
 
 /* Vorlagen */
 .preset-group { margin: 14px 0 0; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
@@ -486,11 +472,6 @@ a:hover { color: var(--accent-hover); }
 
 /* Mobile-Korrekturen: Kopfzeile & Datenschutz-Hinweis */
 .site-header { display: grid; grid-template-columns: 1fr auto; align-items: center; }
-.site-header .site-nav { grid-column: 1 / -1; order: 3; }
-@media (min-width: 900px) {
-  .site-header { grid-template-columns: auto 1fr auto; }
-  .site-header .site-nav { grid-column: auto; order: 0; justify-self: end; margin-right: 8px; }
-}
 .privacy-note { display: block; }
 .privacy-note .badge { display: inline-flex; white-space: normal; margin-right: 6px; vertical-align: top; }
 .privacy-note .badge svg { margin-top: 2px; }
@@ -498,3 +479,12 @@ a:hover { color: var(--accent-hover); }
 .presets-list.collapsed .preset:nth-child(n+10) { display: none; }
 .more-presets { margin-top: 10px; }
 .prose, .legal { overflow-wrap: break-word; hyphens: auto; }
+
+/* Ideen für den Text */
+.ideas { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); padding: 0; margin: 0; list-style: none; }
+.idea { display: flex; flex-direction: column; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.idea h3 { margin: 0; font-size: 1.05rem; }
+.idea p { margin: 0; color: var(--muted); }
+.idea-examples { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.idea-examples li { padding: 4px 10px; border-radius: 999px; background: var(--surface-2); font-size: .85rem; font-weight: 700; }
+.idea .btn { margin-top: auto; align-self: flex-start; }

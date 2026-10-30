@@ -422,6 +422,18 @@
     requestRender();
   }
 
+  /** Buttons „Vorlage übernehmen“ im Ideen-Abschnitt der Seite. */
+  function bindPresetButtons() {
+    document.querySelectorAll("[data-apply-preset]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var p = PBG.presetByKey(b.getAttribute("data-apply-preset"));
+        if (!p) return;
+        applyPreset(p);
+        els.stage.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+  }
+
   function markPreset() {
     document.querySelectorAll(".preset").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.dataset.key === activePreset));
@@ -713,9 +725,9 @@
   }
 
   // ---------- Teilen-Dialog (virale Verbreitung): „Link kopieren“ und Teilen-Funktion des Geräts ----------
+  /** Geteilt wird immer nur die Startseite – nie Foto, Logo oder Einstellungen. */
   function appShareUrl() {
-    var p = activePreset && PBG.presetByKey(activePreset);
-    return PBG.absUrl(p ? "/vorlage/" + p.key + "/" : "/");
+    return PBG.absUrl("/");
   }
 
   function maybeShowShareDialog() {
@@ -784,6 +796,7 @@
     bindExport();
     bindShareDialog();
     buildPresets();
+    bindPresetButtons();
     applyPreset(initialPreset());
 
     // Neu zeichnen, wenn sich Größe oder Pixeldichte ändern

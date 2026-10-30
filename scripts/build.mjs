@@ -8,11 +8,10 @@
  * Aufruf: node scripts/build.mjs   (oder npm run build)
  * Umgebungsvariablen überschreiben config/site.json (siehe README).
  */
-import { readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import vm from "node:vm";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
@@ -27,13 +26,7 @@ set(cfg, "basePath", env.BASE_PATH);
 cfg.siteUrl = cfg.siteUrl.replace(/\/+$/, "");
 cfg.basePath = (cfg.basePath || "").replace(/\/+$/, "");
 
-// ---------- Vorlagen aus dem Browser-Code lesen (eine Quelle der Wahrheit) ----------
-const sandbox = {};
-sandbox.window = sandbox;
-vm.runInNewContext(readFileSync(join(root, "public/js/presets.js"), "utf8"), sandbox);
-const presets = sandbox.PBG.PRESETS;
-
-const { home, landingPages } = await import(pathToFileURL(join(root, "src/content.mjs")).href);
+const { home } = await import(pathToFileURL(join(root, "src/content.mjs")).href);
 
 // Cache-Busting: Hash über alle CSS/JS-Dateien
 const hash = createHash("sha1");
@@ -46,9 +39,7 @@ const pageModules = readdirSync(join(root, "src/pages")).filter((f) => f.endsWit
 
 const ctx = {
   cfg,
-  presets,
   home,
-  landing: landingPages,
   version: hash.digest("hex").slice(0, 10),
   u: (p) => cfg.basePath + p,
   abs: (p) => cfg.siteUrl + cfg.basePath + p
@@ -107,9 +98,23 @@ writeFileSync(join(dist, "manifest.webmanifest"), JSON.stringify({
   ]
 }, null, 2));
 
+// 404-Seite. GitHub Pages kennt keine Server-Weiterleitungen, deshalb leitet ein Skript frühere Adressen
+// (Landingpages, Vorlagen-Seiten, Bezahl- und Firmen-Seiten) auf die Startseite um.
+// /rahmen/<name>/ und /vorlage/<name>/ öffnen dabei die gleichnamige Vorlage (?vorlage=<name>).
 writeFileSync(join(dist, "404.html"), `<!doctype html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seite nicht gefunden | ${cfg.appName}</title><meta name="robots" content="noindex">
+<script>
+  (function () {
+    var base = ${JSON.stringify(cfg.basePath)};
+    var path = location.pathname;
+    if (path.indexOf(base + "/") !== 0) return;
+    var m = path.slice(base.length).match(/^\/(rahmen|vorlage|premium|unternehmen|admin|team)(?:\/([a-z0-9-]*))?/);
+    if (!m) return;
+    var preset = (m[1] === "rahmen" || m[1] === "vorlage") && m[2] ? "?vorlage=" + m[2] : "";
+    location.replace(base + "/" + preset);
+  })();
+</script>
 <link rel="stylesheet" href="${ctx.u("/css/styles.css")}?v=${ctx.version}"></head>
 <body><main class="section prose"><h1>Seite nicht gefunden</h1>
 <p>Diese Seite gibt es leider nicht (mehr). <a href="${ctx.u("/")}">Zum Rahmen-Editor</a></p></main></body></html>
@@ -118,6 +123,4 @@ writeFileSync(join(dist, "404.html"), `<!doctype html>
 // GitHub Pages: keine Jekyll-Verarbeitung
 writeFileSync(join(dist, ".nojekyll"), "");
 
-const missingImages = presets.filter((p) => !existsSync(join(dist, "img/examples", `${p.key}.webp`)));
 console.log(`✓ ${allPages.length} Seiten nach dist/ geschrieben (Version ${ctx.version}).`);
-if (missingImages.length) console.log(`! Beispielbilder fehlen für: ${missingImages.map((p) => p.key).join(", ")} → npm run images`);

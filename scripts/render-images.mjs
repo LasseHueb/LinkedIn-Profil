@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Erzeugt Beispielbilder (WebP), Open-Graph-Bilder (PNG 1200×630) und App-Icons
+ * Erzeugt die Open-Graph-Bilder (JPEG 1200×630) für Startseite und Rechtsseiten sowie die App-Icons
  * mit dem echten Renderer im Browser. Ergebnis landet in public/img/ und wird eingecheckt.
  *
  * Voraussetzung (einmalig, nur lokal):  npm i --no-save playwright && npx playwright install chromium
@@ -18,7 +18,7 @@ try { ({ chromium } = await import("playwright")); } catch {
   console.error("Playwright fehlt. Installieren mit: npm i --no-save playwright && npx playwright install chromium");
   process.exit(1);
 }
-const { home, landingPages } = await import(pathToFileURL(join(root, "src/content.mjs")).href);
+const { home } = await import(pathToFileURL(join(root, "src/content.mjs")).href);
 
 const port = 8791;
 const server = spawn(process.execPath, [join(root, "scripts/serve.mjs")], { env: { ...process.env, PORT: String(port) }, stdio: "ignore" });
@@ -26,7 +26,7 @@ await new Promise((r) => setTimeout(r, 600));
 
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const page = await browser.newPage();
-await page.goto(`http://localhost:${port}/vorlage/jobsuche/`);
+await page.goto(`http://localhost:${port}/`);
 await page.waitForFunction(() => window.PBG && window.PBG.render);
 await page.evaluate(() => document.fonts.ready);
 
@@ -137,20 +137,12 @@ await page.evaluate(() => {
   };
 });
 
-const presets = await page.evaluate(() => PBG.PRESETS.map((p) => ({ key: p.key, name: p.name.de, text: p.text.de })));
-let i = 0;
-for (const p of presets) {
-  save(`examples/${p.key}.webp`, await page.evaluate(async ([k, n]) => (await window.__example(k, 320, n)).toDataURL("image/webp", 0.86), [p.key, i]));
-  save(`og/vorlage-${p.key}.jpg`, await page.evaluate(async ([k, t, n]) => (await window.__og(k, `Profilbild-Rahmen „${t}“`, "Jetzt selbst gestalten – kostenlos", n)).toDataURL("image/jpeg", 0.86), [p.key, p.text, i]));
-  i++;
-}
 const og = async (name, key, title, sub, n) =>
   save(`og/${name}.jpg`, await page.evaluate(async ([k, t, s, n]) => (await window.__og(k, t, s, n)).toDataURL("image/jpeg", 0.86), [key, title, sub, n]));
 
-const sub = "Eigener Text · Kostenlos · Ohne Upload";
-await og("default", "jobsuche", "Profilbild-Rahmen mit eigenem Text", sub, 0);
+const sub = "Eigener Text · Logo · Komplett kostenlos";
 await og("home", home.preset, home.h1.replace("{app}", ""), sub, 0);
-for (const [n, l] of landingPages.entries()) await og(l.slug, l.preset, l.h1, sub, n + 1);
+await og("default", "recruiting", "Profilbild-Rahmen mit eigenem Text", sub, 1);
 
 // App-Icons
 for (const [name, size] of [["icon-192.png", 192], ["icon-512.png", 512], ["apple-touch-icon.png", 180]]) {
@@ -168,4 +160,4 @@ for (const [name, size] of [["icon-192.png", 192], ["icon-512.png", 512], ["appl
 
 await browser.close();
 server.kill();
-console.log(`✓ ${presets.length} Beispielbilder, ${presets.length + 4 + landingPages.length} OG-Bilder und Icons erzeugt.`);
+console.log("✓ OG-Bilder (Startseite, Standard) und Icons erzeugt.");
