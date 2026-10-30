@@ -8,7 +8,9 @@
 
   var MAX_PHOTO_SIDE = 3200;   // größere Fotos werden beim Laden verkleinert (Speicher auf Mobilgeräten)
   var MAX_ZOOM = 4;
-  var RANGE_KEYS = ["size", "spacing", "textPos", "ringWidth", "ringLength", "ringRotation", "fade", "opacity"];
+  var MAX_LOGO_SIDE = 512;     // Logos werden beim Laden auf höchstens 512 px verkleinert
+  var MAX_LOGO_FILE_MB = 10;
+  var RANGE_KEYS = ["size", "spacing", "textPos", "ringWidth", "ringLength", "ringRotation", "fade", "opacity", "logoSize"];
   var COLOR_KEYS = ["textColor", "ringColor", "ringColor2"];
 
   var $ = function (id) { return document.getElementById(id); };
@@ -22,7 +24,8 @@
   var state = Object.assign({}, PBG.DEFAULTS, { zoom: 1, offsetX: 0, offsetY: 0, exportSize: 1080 });
   var photo = null;          // verkleinerter Canvas mit dem Foto (nur im Arbeitsspeicher)
   var photoName = "";
-  var logo = null;           // Logo (nur im Arbeitsspeicher)
+  var logo = null;           // Logo als Canvas (nur im Arbeitsspeicher, nie hochgeladen)
+  var logoDataUrl = "";      // dasselbe Logo als PNG-Data-URL (für eigene Vorlagen im lokalen Speicher)
   var activePreset = null;
   var lastInfo = { scale: 1, overflow: false };
 
@@ -31,7 +34,8 @@
     fileInput: $("file-input"), dropzone: $("dropzone"), uploadStatus: $("upload-status"),
     zoom: $("zoom"), resetCrop: $("reset-crop"), removePhoto: $("remove-photo"),
     presets: $("presets"),
-    text: $("text"), font: $("font"), bold: $("bold"), uppercase: $("uppercase"),
+    text: $("text"), textReplaced: $("text-replaced"), font: $("font"), bold: $("bold"), uppercase: $("uppercase"),
+    logoInput: $("logo-input"), logoRemove: $("logo-remove"), logoStatus: $("logo-status"), logoSettings: $("logo-settings"),
     icon: $("icon"), iconPos: $("iconPos"), emojiRow: $("emoji-row"),
     gradient: $("gradient"), ringColor2Field: $("ringColor2-field"),
     textWarning: $("text-warning"), contrastWarning: $("contrast-warning"),
@@ -148,7 +152,7 @@
 
     var ratio = contrast(state.textColor, state.ringColor);
     if (state.gradient) ratio = Math.min(ratio, contrast(state.textColor, state.ringColor2));
-    var low = ratio < 3 && !!state.text;
+    var low = ratio < 3 && !!state.text && !(logo && state.logoPos === "replace");
     els.contrastWarning.textContent = low ? t("text.lowContrast", { ratio: ratio.toFixed(1).replace(".", PBG.lang === "de" ? "," : ".") }) : "";
     els.contrastWarning.hidden = !low;
   }
@@ -230,6 +234,8 @@
     });
     els.zoom.value = state.zoom;
     updateOutput("zoom");
+    document.querySelectorAll('input[name="logoPos"]').forEach(function (r) { r.checked = r.value === state.logoPos; });
+    updateLogoUI();
     document.querySelectorAll('input[name="bg"]').forEach(function (r) { r.checked = r.value === state.bg; });
     document.querySelectorAll('input[name="exportSize"]').forEach(function (r) { r.checked = Number(r.value) === state.exportSize; });
     els.downloadLabel.textContent = t("export.download", { size: state.exportSize });
@@ -414,7 +420,8 @@
   }
 
   function applyPreset(p) {
-    var keep = { zoom: state.zoom, offsetX: state.offsetX, offsetY: state.offsetY, bg: state.bg, exportSize: state.exportSize };
+    // Foto-Ausschnitt, Export und Logo-Einstellungen bleiben beim Wechsel der Vorlage erhalten
+    var keep = { zoom: state.zoom, offsetX: state.offsetX, offsetY: state.offsetY, bg: state.bg, exportSize: state.exportSize, logoPos: state.logoPos, logoSize: state.logoSize };
     Object.assign(state, presetState(p), keep);
     activePreset = p.key;
     syncControls();
@@ -545,6 +552,92 @@
       if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
       var items = (e.clipboardData && e.clipboardData.files) || [];
       if (items.length) loadFile(items[0]);
+    });
+  }
+
+  // ---------- Logo: nur im Browser, auf höchstens 512 px verkleinert ----------
+  function isSvg(file) {
+    return file.type === "image/svg+xml" || /\.svg$/i.test(file.name || "");
+  }
+
+  function isLogoFile(file) {
+    return /^image\/(png|jpeg|webp|svg\+xml)$/.test(file.type) || /\.(png|jpe?g|webp|svg)$/i.test(file.name || "");
+  }
+
+  /** Zeichnet das Logo auf einen Canvas mit höchstens MAX_LOGO_SIDE px. SVGs werden auf diese Größe gerastert. */
+  function toLogoCanvas(img, svg) {
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    if (!w || !h) { w = h = MAX_LOGO_SIDE; } // SVG ohne eigene Größe
+    var scale = MAX_LOGO_SIDE / Math.max(w, h);
+    if (!svg) scale = Math.min(1, scale);   // Pixelbilder nie vergrößern
+    var c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round(w * scale));
+    c.height = Math.max(1, Math.round(h * scale));
+    var ctx = c.getContext("2d");
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    return c;
+  }
+
+  /** Setzt das Logo aus einem Canvas; die Data-URL dient zugleich als Prüfung, dass der Canvas exportierbar ist. */
+  function setLogoCanvas(c) {
+    var url = c.toDataURL("image/png"); // wirft bei „verunreinigtem“ Canvas – dann wäre auch der Export kaputt
+    logo = c;
+    logoDataUrl = url;
+    updateLogoUI();
+    requestRender();
+  }
+
+  function clearLogo() {
+    logo = null;
+    logoDataUrl = "";
+    els.logoInput.value = "";
+    updateLogoUI();
+    requestRender();
+  }
+
+  function loadLogoFile(file) {
+    if (!file) return;
+    if (!isLogoFile(file)) { setStatus(els.logoStatus, t("logo.errorType"), true); return; }
+    if (file.size > MAX_LOGO_FILE_MB * 1024 * 1024) { setStatus(els.logoStatus, t("logo.errorSize", { max: MAX_LOGO_FILE_MB }), true); return; }
+    setStatus(els.logoStatus, t("logo.loading"));
+    var svg = isSvg(file);
+    // SVG ausdrücklich als image/svg+xml laden, sonst zeigen manche Browser es nicht an
+    var blob = svg && file.type !== "image/svg+xml" ? new Blob([file], { type: "image/svg+xml" }) : file;
+    decodeImage(blob).then(function (img) {
+      setLogoCanvas(toLogoCanvas(img, svg));
+      setStatus(els.logoStatus, t("logo.loaded", { name: file.name || "" }));
+    }).catch(function () {
+      setStatus(els.logoStatus, t("logo.error"), true);
+    });
+  }
+
+  /** Bedienelemente an den Logo-Zustand anpassen; bei „Statt Text“ wird das Textfeld deaktiviert und gekennzeichnet. */
+  function updateLogoUI() {
+    var has = !!logo;
+    els.logoRemove.hidden = !has;
+    els.logoSettings.hidden = !has;
+    var replaced = has && state.logoPos === "replace";
+    els.text.disabled = replaced;
+    els.textReplaced.hidden = !replaced;
+    els.text.closest(".field").classList.toggle("is-replaced", replaced);
+  }
+
+  function bindLogo() {
+    els.logoInput.addEventListener("change", function () {
+      loadLogoFile(els.logoInput.files && els.logoInput.files[0]);
+    });
+    els.logoRemove.addEventListener("click", function () {
+      clearLogo();
+      setStatus(els.logoStatus, t("logo.removed"));
+    });
+    document.querySelectorAll('input[name="logoPos"]').forEach(function (r) {
+      r.addEventListener("change", function () {
+        if (!r.checked) return;
+        state.logoPos = r.value;
+        updateLogoUI();
+        changed();
+      });
     });
   }
 
@@ -792,6 +885,7 @@
     buildEmojiRow();
     bindControls();
     bindUpload();
+    bindLogo();
     bindCrop();
     bindExport();
     bindShareDialog();

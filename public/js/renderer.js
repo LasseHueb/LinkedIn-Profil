@@ -53,8 +53,9 @@ window.PBG = window.PBG || {};
     return weightFor(state) + " " + px.toFixed(2) + 'px "' + state.font + '", system-ui, sans-serif';
   }
 
-  /** Baut die Abfolge aus Zeichen, Symbolen und Logo. */
+  /** Baut die Abfolge aus Zeichen, Symbolen und Logo. logoPos "replace": nur das Logo, mittig auf dem Bogen. */
   function buildItems(state, text, hasLogo) {
+    if (hasLogo && state.logoPos === "replace") return [{ type: "logo" }];
     var items = splitGraphemes(text).map(function (c) { return { type: "char", value: c }; });
     var icon = state.icon && PBG.iconById ? PBG.iconById(state.icon) : null;
     if (icon && items.length) {
@@ -70,8 +71,16 @@ window.PBG = window.PBG || {};
     return items;
   }
 
+  /** Seitenverhältnis eines Logos (Breite/Höhe), begrenzt auf sinnvolle Werte. */
+  function logoAspect(logo) {
+    var iw = logo.naturalWidth || logo.width, ih = logo.naturalHeight || logo.height;
+    if (!iw || !ih) return 1;
+    return Math.min(Math.max(iw / ih, 0.25), 6);
+  }
+
   /** Berechnet Ring- und Textgeometrie (wird auch für die Längenwarnung genutzt). */
-  function layout(ctx, state, size, hasLogo) {
+  function layout(ctx, state, size, logo) {
+    var hasLogo = !!logo;
     var R = size / 2;
     var ringW = R * state.ringWidth / 100;
     var rText = R - ringW / 2;
@@ -82,6 +91,9 @@ window.PBG = window.PBG || {};
     var text = prepareText(state);
     var items = buildItems(state, text, hasLogo);
     var baseFont = ringW * state.size / 100;
+    // Logohöhe in % der Ringbreite (logoSize), Breite nach Seitenverhältnis; schrumpft mit dem Text
+    var logoH0 = ringW * 0.92 * (state.logoSize || 80) / 100;
+    var aspect = hasLogo ? logoAspect(logo) : 1;
 
     // Platz für den Text: Ring ohne die ausgeblendeten Enden, mit etwas Rand.
     var available = Math.max(arcLen - 2 * fade * 0.85 - 6 * DEG, 10 * DEG);
@@ -90,7 +102,8 @@ window.PBG = window.PBG || {};
       ctx.font = fontString(state, fontPx);
       var spacing = fontPx * state.spacing / 100;
       var symbolW = fontPx * 0.95;
-      var logoW = Math.min(ringW * 0.82, fontPx * 1.3);
+      var logoH = logoH0 * fontPx / baseFont;
+      var logoW = logoH * aspect;
       var out = [];
       var x = 0, end = 0;
       var run = "", runStart = 0, runIdx = 0;
@@ -109,12 +122,12 @@ window.PBG = window.PBG || {};
           run = ""; runIdx = 0;
           runStart = start + w + spacing;
         }
-        out.push({ item: it, offset: start, width: w });
+        out.push({ item: it, offset: start, width: w, height: it.type === "logo" ? logoH : w });
         end = start + w;
         x = end + spacing;
         if (it.type !== "char") runStart = x;
       });
-      return { glyphs: out, total: end, angle: end / rText, symbolW: symbolW, logoW: logoW };
+      return { glyphs: out, total: end, angle: end / rText, symbolW: symbolW, logoW: logoW, logoH: logoH };
     }
 
     var scale = 1;
@@ -286,10 +299,10 @@ window.PBG = window.PBG || {};
     ctx.restore();
   }
 
-  function drawLogo(ctx, logo, w) {
+  function drawLogo(ctx, logo, w, h) {
     var iw = logo.naturalWidth || logo.width, ih = logo.naturalHeight || logo.height;
     if (!iw || !ih) return;
-    var s = Math.min(w / iw, w / ih);
+    var s = Math.min(w / iw, h / ih);
     var dw = iw * s, dh = ih * s;
     ctx.drawImage(logo, -dw / 2, -dh / 2, dw, dh);
   }
@@ -320,7 +333,7 @@ window.PBG = window.PBG || {};
       ctx.rotate(theta - Math.PI / 2);
       if (g.item.type === "char") ctx.fillText(g.item.value, 0, nudge);
       else if (g.item.type === "icon") drawIcon(ctx, g.item.icon, g.width * 0.95, state.textColor);
-      else if (g.item.type === "logo" && logo) drawLogo(ctx, logo, g.width);
+      else if (g.item.type === "logo" && logo) drawLogo(ctx, logo, g.width, g.height);
       ctx.restore();
     });
     ctx.restore();
@@ -349,7 +362,7 @@ window.PBG = window.PBG || {};
     layer.width = layer.height = size;
     var lc = layer.getContext("2d");
     drawPhoto(lc, state, photo, size);
-    var L = layout(lc, state, size, !!opts.logo);
+    var L = layout(lc, state, size, opts.logo || null);
     drawRing(lc, state, L, size);
     drawText(lc, state, L, size, opts.logo);
 

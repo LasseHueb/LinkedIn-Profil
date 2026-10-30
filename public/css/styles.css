@@ -488,3 +488,11 @@ a:hover { color: var(--accent-hover); }
 .idea-examples { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .idea-examples li { padding: 4px 10px; border-radius: 999px; background: var(--surface-2); font-size: .85rem; font-weight: 700; }
 .idea .btn { margin-top: auto; align-self: flex-start; }
+
+/* Logo */
+.file-button { position: relative; }
+.file-button:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.segmented-wrap { display: flex; flex-wrap: wrap; }
+.segmented-wrap label { flex: 1 1 auto; }
+.field-note { margin: 8px 0 0; padding: 8px 12px; border-radius: 8px; font-size: .875rem; background: var(--surface-2); color: var(--text); }
+.is-replaced input[type="text"] { opacity: .55; cursor: not-allowed; text-decoration: line-through; }

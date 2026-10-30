@@ -43,13 +43,14 @@ PBG.DEFAULTS = {
   opacity: 100,      // Deckkraft des Rings in %
   icon: "",          // Symbol-ID aus PBG.ICONS
   iconPos: "start",  // start | end | both
-  logoPos: "end",    // Firmen-Logo: start | end
+  logoPos: "end",    // Logo: start (links vom Text) | end (rechts vom Text) | replace (statt Text)
+  logoSize: 80,      // Logohöhe in % der Ringbreite
   bg: "transparent"
 };
 
 /** Einstellungen, die eine Vorlage ausmachen (werden gespeichert / geteilt). */
 PBG.DESIGN_KEYS = ["text", "font", "size", "bold", "uppercase", "spacing", "textPos", "textColor", "ringColor",
-  "ringColor2", "gradient", "ringWidth", "ringLength", "ringRotation", "fade", "opacity", "icon", "iconPos", "logoPos"];
+  "ringColor2", "gradient", "ringWidth", "ringLength", "ringRotation", "fade", "opacity", "icon", "iconPos", "logoPos", "logoSize"];
 
 /**
  * Vorlagen. key = URL-Slug (/vorlage/<key>/). name/text je Sprache.

@@ -57,7 +57,8 @@
       <legend data-i18n="text.heading">3. Text</legend>
       <div class="field">
         <label for="text" data-i18n="text.label">Text auf dem Ring</label>
-        <input type="text" id="text" maxlength="60" autocomplete="off" spellcheck="false" data-i18n-placeholder="text.placeholder" aria-describedby="text-warning">
+        <input type="text" id="text" maxlength="60" autocomplete="off" spellcheck="false" data-i18n-placeholder="text.placeholder" aria-describedby="text-warning text-replaced">
+        <p class="field-note" id="text-replaced" data-i18n="text.replacedByLogo" hidden>Das Logo steht statt des Texts auf dem Ring. Um wieder Text zu zeigen, wähle unter „Logo“ eine andere Position.</p>
         <p class="warning" id="text-warning" role="status" aria-live="polite" hidden></p>
       </div>
 
@@ -112,9 +113,38 @@
       </div>
     </fieldset>
 
-    <!-- 4. Ring -->
+    <!-- 4. Logo (nur im Browser) -->
+    <fieldset class="panel" data-panel="logo">
+      <legend data-i18n="logo.heading">4. Logo</legend>
+      <p class="small muted" data-i18n="logo.hint">Am besten wirkt ein Logo mit transparentem Hintergrund. Es bleibt auf deinem Gerät.</p>
+      <div class="button-row">
+        <label class="btn btn-secondary file-button">
+          <span data-i18n="logo.choose">Logo hochladen</span>
+          <input type="file" id="logo-input" class="visually-hidden" accept="image/png,image/jpeg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg">
+        </label>
+        <button type="button" class="btn btn-ghost" id="logo-remove" data-i18n="logo.remove" hidden>Logo entfernen</button>
+      </div>
+      <p class="small muted" data-i18n="logo.formats">PNG, JPG, WebP oder SVG</p>
+      <p class="status" id="logo-status" role="status" aria-live="polite"></p>
+      <div id="logo-settings" hidden>
+        <div class="field">
+          <span class="label" id="logoPos-label" data-i18n="logo.pos">Position</span>
+          <div class="segmented segmented-text segmented-wrap" role="radiogroup" aria-labelledby="logoPos-label">
+            <label><input type="radio" name="logoPos" value="start"><span data-i18n="logo.start">Links vom Text</span></label>
+            <label><input type="radio" name="logoPos" value="end"><span data-i18n="logo.end">Rechts vom Text</span></label>
+            <label><input type="radio" name="logoPos" value="replace"><span data-i18n="logo.replace">Statt Text</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-head"><label for="logoSize" data-i18n="logo.size">Logogröße</label><output for="logoSize" id="logoSize-out"></output></div>
+          <input type="range" id="logoSize" min="40" max="100" step="1" data-unit="pct">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 5. Ring -->
     <fieldset class="panel" data-panel="ring">
-      <legend data-i18n="ring.heading">4. Ring</legend>
+      <legend data-i18n="ring.heading">5. Ring</legend>
       <div class="field color-field">
         <label for="ringColor" data-i18n="ring.color">Ringfarbe</label>
         <div class="color-inputs">
@@ -155,9 +185,9 @@
       </div>
     </fieldset>
 
-    <!-- 5. Export -->
+    <!-- 6. Export -->
     <fieldset class="panel export-panel" data-panel="export">
-      <legend data-i18n="export.heading">5. Export</legend>
+      <legend data-i18n="export.heading">6. Export</legend>
       <div class="field-row">
         <div class="field">
           <span class="label" id="bg-label" data-i18n="export.bg">Hintergrund außerhalb des Kreises</span>
