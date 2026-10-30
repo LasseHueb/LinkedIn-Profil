@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Kleiner lokaler Webserver für dist/ (inkl. Rewrite /team/<slug> wie auf Netlify/Vercel). */
+/* Kleiner lokaler Webserver für dist/ (unbekannte Pfade liefern wie GitHub Pages die 404.html). */
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { join, extname, normalize } from "node:path";
@@ -15,7 +15,6 @@ const types = {
 
 createServer(async (req, res) => {
   let path = decodeURIComponent(new URL(req.url, "http://x").pathname);
-  if (/^\/team\/[^/]+\/?$/.test(path)) path = "/team/index.html";
   let file = normalize(join(dist, path));
   if (!file.startsWith(dist)) { res.writeHead(403).end(); return; }
   try {

@@ -1,7 +1,7 @@
 window.PBG = window.PBG || {};
 
 /*
- * Symbole für den Ring (nur Vollversion). 24×24-Pfade; "stroke" = als Linie zeichnen.
+ * Symbole für den Ring. 24×24-Pfade; "stroke" = als Linie zeichnen.
  * Teilweise angelehnt an Material Icons (Apache License 2.0).
  */
 PBG.ICONS = [
@@ -23,7 +23,7 @@ PBG.ICONS = [
   { id: "code", label: { de: "Code", en: "Code" }, stroke: true, d: "M8 6l-6 6 6 6M16 6l6 6-6 6M14 3.5l-4 17" }
 ];
 
-/** Emojis für die Schnellauswahl (nur Vollversion). */
+/** Emojis für die Schnellauswahl. */
 PBG.EMOJIS = ["⭐", "✨", "🚀", "💼", "💡", "🎯", "🤝", "❤️", "🌱", "🌍", "🎓", "📣", "✅", "🔥", "👋", "🏳️‍🌈"];
 
 PBG.iconById = function (id) {

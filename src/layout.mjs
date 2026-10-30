@@ -5,7 +5,6 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { stripEdition } from "./edition.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const editorHtml = readFileSync(join(here, "partials/editor.html"), "utf8");
@@ -15,26 +14,23 @@ export function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
-/** Ersetzt {app}, {price}, {base} … in Inhaltstexten. */
+/** Ersetzt {app} und {base} in Inhaltstexten. */
 export function fill(ctx, s) {
   return String(s ?? "")
     .replaceAll("{app}", ctx.cfg.appName)
-    .replaceAll("{price}", ctx.cfg.premium.price)
-    .replaceAll("{starter}", ctx.cfg.business.starterPrice)
-    .replaceAll("{team}", ctx.cfg.business.teamPrice)
     .replaceAll("{base}", ctx.cfg.basePath);
 }
 
 /**
  * Unabhängigkeitshinweis – die einzige Stelle, an der ein soziales Netzwerk namentlich genannt wird (Footer und Impressum).
- * scripts/check-dist.mjs lässt nur Zeilen mit „in keiner Verbindung zu“ durch.
+ * Muss in einer Zeile stehen: scripts/check-dist.mjs lässt nur Zeilen mit „in keiner Verbindung zu“ durch.
  */
 export function independenceNote(ctx) {
-  return `${esc(ctx.cfg.appName)} ist ein unabhängiges Angebot und steht in keiner Verbindung zu LinkedIn, Xing oder anderen sozialen Netzwerken. Alle genannten Marken gehören ihren jeweiligen Inhabern.`;
+  return `${esc(ctx.cfg.appName)} ist ein unabhängiges Angebot. Es steht in keiner Verbindung zu LinkedIn, XING oder anderen sozialen Netzwerken und wird von ihnen weder betrieben noch unterstützt. LinkedIn und XING sind Marken ihrer jeweiligen Inhaber.`;
 }
 
 export function editor(ctx) {
-  return stripEdition(editorHtml, ctx.edition, "editor.html").replaceAll("{{base}}", ctx.cfg.basePath);
+  return editorHtml.replaceAll("{{base}}", ctx.cfg.basePath);
 }
 
 const ICON_SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3z" fill="currentColor"/></svg>';
@@ -42,14 +38,14 @@ const ICON_SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 
 export function privacyNote() {
   return `<p class="privacy-note" role="note">
     <span class="badge">${ICON_SHIELD}<strong>Deine Fotos verlassen nie deinen Browser.</strong></span>
-    <span>Alles wird direkt auf deinem Gerät berechnet – kein Upload, keine Speicherung, keine Cookies.</span>
+    <span>Fotos und Logos werden direkt auf deinem Gerät verarbeitet – kein Upload, kein Konto, keine Cookies.</span>
   </p>`;
 }
 
 export function trustRow() {
   const check = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   return `<ul class="trust-row">
-    <li>${check}Kostenlos</li><li>${check}Ohne Anmeldung</li><li>${check}Kein Foto-Upload</li><li>${check}PNG in 1080 px</li>
+    <li>${check}Komplett kostenlos</li><li>${check}Ohne Anmeldung</li><li>${check}Kein Foto-Upload</li><li>${check}PNG bis 2048 px</li>
   </ul>`;
 }
 
@@ -84,39 +80,18 @@ export function webAppJsonLd(ctx, url) {
     browserRequirements: "Benötigt JavaScript und einen aktuellen Browser",
     inLanguage: "de",
     isAccessibleForFree: true,
-    offers: [
-      { "@type": "Offer", name: "Kostenlos", price: "0", priceCurrency: c.premium.currency },
-      ...(ctx.full ? [{ "@type": "Offer", name: "Premium (einmalig)", price: String(c.premium.priceValue), priceCurrency: c.premium.currency }] : [])
-    ],
-    featureList: ["Eigener Text auf dem Profilbild-Ring", "Farben und Schriftarten frei wählbar", "PNG-Export 1080 × 1080 px", "Fotos bleiben im Browser"]
+    offers: { "@type": "Offer", name: "Kostenlos", price: "0", priceCurrency: "EUR" },
+    featureList: ["Eigener Text auf dem Profilbild-Ring", "Eigenes Logo auf dem Ring", "Farben, Farbverläufe und Schriftarten frei wählbar", "Eigene Vorlagen speichern und weitergeben", "PNG-Export bis 2048 × 2048 px", "Fotos und Logos bleiben im Browser"]
   };
 }
 
-export function breadcrumbJsonLd(ctx, items) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map(([name, path], i) => ({ "@type": "ListItem", position: i + 1, name, item: ctx.abs(path) }))
-  };
-}
-
-function header(ctx, path) {
+function header(ctx) {
   const u = ctx.u;
-  const nav = [
-    ["/", "Rahmen erstellen"],
-    ["/rahmen/jobsuche/", "Jobsuche"],
-    ["/rahmen/recruiting/", "Recruiting"],
-    ...(ctx.hasPage("/premium/") ? [["/premium/", 'Premium <span class="pro-badge" aria-hidden="true">PRO</span>']] : []),
-    ...(ctx.hasPage("/unternehmen/") ? [["/unternehmen/", "Für Unternehmen"]] : [])
-  ];
   return `<header class="site-header">
     <a class="brand" href="${u("/")}" aria-label="${esc(ctx.cfg.appName)} – Startseite">
       <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="currentColor" stroke-width="2" opacity=".35"/><path d="M3.5 21A13.5 13.5 0 0 0 28.5 21" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg>
       <span class="brand-name">${esc(ctx.cfg.appName)}</span>
     </a>
-    <nav class="site-nav" aria-label="Hauptnavigation">
-      ${nav.map(([p, label]) => `<a href="${u(p)}"${p === path ? ' aria-current="page"' : ""}${p === "/premium/" ? ' class="nav-premium"' : ""}>${label}</a>`).join("\n      ")}
-    </nav>
     <div class="segmented" role="radiogroup" aria-label="Farbschema" id="theme-switch">
       <button type="button" role="radio" data-theme-value="auto" title="System" aria-checked="true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
@@ -136,37 +111,17 @@ function header(ctx, path) {
 
 function footer(ctx) {
   const u = ctx.u;
-  const links = [
-    ...ctx.landing.map((l) => [`/rahmen/${l.slug}/`, l.navLabel || l.h1]),
-  ];
-  const legal = [
-    ...(ctx.hasPage("/premium/") ? [["/premium/", "Premium"]] : []),
-    ...(ctx.hasPage("/unternehmen/") ? [["/unternehmen/", "Für Unternehmen"]] : []),
-    ["/impressum/", "Impressum"], ["/datenschutz/", "Datenschutz"], ["/agb/", "AGB"], ["/widerruf/", "Widerruf"]
-  ].filter(([p]) => ctx.hasPage(p));
+  const legal = [["/impressum/", "Impressum"], ["/datenschutz/", "Datenschutz"]];
   return `<footer class="site-footer">
-    <ul class="footer-nav" aria-label="Anwendungsfälle">${links.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
     <ul class="footer-nav" aria-label="Rechtliches">${legal.map(([p, l]) => `<li><a href="${u(p)}">${esc(l)}</a></li>`).join("")}</ul>
-    <p>Deine Fotos verlassen nie deinen Browser · Keine Cookies · © ${new Date().getFullYear()} ${esc(ctx.cfg.appName)}</p>
     <p class="small">${independenceNote(ctx)}</p>
+    <p>© ${new Date().getFullYear()} ${esc(ctx.cfg.legal.name)}</p>
   </footer>`;
-}
-
-function analyticsTag(cfg) {
-  const a = cfg.analytics || {};
-  if (a.provider === "plausible" && a.src && a.domain) {
-    return `<script defer data-domain="${esc(a.domain)}" src="${esc(a.src)}"></script>
-  <script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script>`;
-  }
-  if (a.provider === "umami" && a.src && a.websiteId) {
-    return `<script defer src="${esc(a.src)}" data-website-id="${esc(a.websiteId)}"></script>`;
-  }
-  return "";
 }
 
 /**
  * Vollständige HTML-Seite.
- * opts: path, title, description, main (HTML), mode, preset, noindex, canonical, og, jsonLd[], scripts[], editor(bool), bodyClass
+ * opts: path, title, description, main (HTML), preset, noindex, canonical, og, jsonLd[], scripts[], editor(bool), bodyClass
  */
 export function page(ctx, opts) {
   const c = ctx.cfg;
@@ -182,7 +137,7 @@ export function page(ctx, opts) {
   const ver = ctx.version;
 
   return `<!doctype html>
-<html lang="de"${c.ads.enabled ? ' class="ads-enabled"' : ""}>
+<html lang="de">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -215,12 +170,11 @@ export function page(ctx, opts) {
   <link rel="stylesheet" href="${u("/css/styles.css")}?v=${ver}">
   <script>try{var t=localStorage.getItem("pbg-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
   ${scripts.map((s) => `<script defer src="${u(s)}?v=${ver}"></script>`).join("\n  ")}
-  ${analyticsTag(c)}
   ${ld}
 </head>
-<body data-mode="${esc(opts.mode || "public")}"${opts.preset ? ` data-preset="${esc(opts.preset)}"` : ""}${opts.bodyClass ? ` class="${esc(opts.bodyClass)}"` : ""}>
+<body${opts.preset ? ` data-preset="${esc(opts.preset)}"` : ""}${opts.bodyClass ? ` class="${esc(opts.bodyClass)}"` : ""}>
   ${opts.editor ? '<a class="skip-link" href="#controls">Zu den Einstellungen springen</a>' : ""}
-  ${header(ctx, opts.path)}
+  ${header(ctx)}
   <main id="main">
   ${opts.main}
   </main>

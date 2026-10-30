@@ -9,26 +9,11 @@
         </div>
       </div>
       <p class="hint" data-i18n="preview.hint">Ziehen zum Verschieben · Mausrad, Pinch oder +/− zum Zoomen · Pfeiltasten verschieben</p>
-
-      <div class="mini-card">
-        <p class="mini-title" data-i18n="preview.mini">So wirkt es im Feed</p>
-        <div class="mini-post">
-          <canvas id="mini" width="48" height="48" aria-hidden="true"></canvas>
-          <div class="mini-meta">
-            <strong data-i18n="preview.miniName">Dein Name</strong>
-            <span data-i18n="preview.miniMeta">Deine Position · gerade eben</span>
-          </div>
-          <canvas id="mini-xs" width="28" height="28" aria-hidden="true"></canvas>
-        </div>
-        <div class="mini-lines" aria-hidden="true"><span></span><span></span><span></span></div>
-      </div>
     </div>
   </section>
 
   <!-- Einstellungen -->
   <section class="controls-col" id="controls" tabindex="-1" data-i18n-aria="a11y.controls" aria-label="Einstellungen">
-
-    <p class="team-note" id="team-note" hidden></p>
 
     <!-- 1. Foto -->
     <fieldset class="panel" data-panel="photo">
@@ -63,15 +48,31 @@
     <fieldset class="panel" data-panel="presets">
       <legend data-i18n="presets.heading">2. Vorlage</legend>
       <p class="small muted" data-i18n="presets.hint">Startpunkt wählen – danach alles frei anpassbar.</p>
-      <!-- @full-start -->
-      <p class="preset-group" data-i18n="presets.free">Kostenlos</p>
-      <!-- @full-end -->
-      <div class="presets" id="presets-free"></div>
-      <!-- @full-start -->
-      <p class="preset-group"><span data-i18n="presets.premium">Premium-Vorlagen</span> <span class="pro-badge" aria-hidden="true">PRO</span></p>
-      <div class="presets presets-premium collapsed" id="presets-premium"></div>
-      <button type="button" class="btn btn-ghost more-presets" id="more-presets" aria-controls="presets-premium" aria-expanded="false"></button>
-      <!-- @full-end -->
+
+      <!-- Eigene Vorlagen: nur im lokalen Speicher dieses Browsers, nie mit Foto -->
+      <section class="own-templates" aria-labelledby="own-heading">
+        <h3 class="preset-group" id="own-heading" data-i18n="own.heading">Meine Vorlagen</h3>
+        <p class="small muted" id="own-empty" data-i18n="own.empty">Noch keine eigenen Vorlagen. Gestalte deinen Rahmen und speichere ihn hier – auf diesem Gerät, ohne Foto.</p>
+        <ul class="own-list" id="own-list"></ul>
+        <form class="own-save" id="own-save-form" novalidate>
+          <label for="own-name" data-i18n="own.nameLabel">Name der Vorlage</label>
+          <div class="inline-row">
+            <input type="text" id="own-name" maxlength="40" autocomplete="off" data-i18n-placeholder="own.namePlaceholder">
+            <button type="submit" class="btn btn-secondary" data-i18n="own.save">Als eigene Vorlage speichern</button>
+          </div>
+        </form>
+        <div class="button-row">
+          <label class="btn btn-ghost file-button">
+            <span data-i18n="own.import">Aus Datei importieren</span>
+            <input type="file" id="own-import" class="visually-hidden" accept="application/json,.json">
+          </label>
+        </div>
+        <p class="status" id="own-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <h3 class="preset-group" data-i18n="presets.builtin">Vorlagen</h3>
+      <div class="presets presets-list collapsed" id="presets"></div>
+      <button type="button" class="btn btn-ghost more-presets" id="more-presets" aria-controls="presets" aria-expanded="false"></button>
     </fieldset>
 
     <!-- 3. Text -->
@@ -79,7 +80,8 @@
       <legend data-i18n="text.heading">3. Text</legend>
       <div class="field">
         <label for="text" data-i18n="text.label">Text auf dem Ring</label>
-        <input type="text" id="text" maxlength="60" autocomplete="off" spellcheck="false" data-i18n-placeholder="text.placeholder" aria-describedby="text-warning">
+        <input type="text" id="text" maxlength="60" autocomplete="off" spellcheck="false" data-i18n-placeholder="text.placeholder" aria-describedby="text-warning text-replaced">
+        <p class="field-note" id="text-replaced" data-i18n="text.replacedByLogo" hidden>Das Logo steht statt des Texts auf dem Ring. Um wieder Text zu zeigen, wähle unter „Logo“ eine andere Position.</p>
         <p class="warning" id="text-warning" role="status" aria-live="polite" hidden></p>
       </div>
 
@@ -114,11 +116,9 @@
         </div>
       </div>
       <p class="warning" id="contrast-warning" role="status" aria-live="polite" hidden></p>
-
-      <!-- @full-start -->
-      <div class="field-row" data-premium-feature="icon">
+      <div class="field-row">
         <div class="field">
-          <label for="icon"><span data-i18n="icon.label">Symbol im Ring</span> <span class="pro-badge" aria-hidden="true">PRO</span></label>
+          <label for="icon"><span data-i18n="icon.label">Symbol im Ring</span></label>
           <select id="icon"></select>
         </div>
         <div class="field">
@@ -130,16 +130,44 @@
           </select>
         </div>
       </div>
-      <div class="field" data-premium-feature="icon">
-        <span class="label" id="emoji-label"><span data-i18n="emoji.label">Emoji einfügen</span> <span class="pro-badge" aria-hidden="true">PRO</span></span>
+      <div class="field">
+        <span class="label" id="emoji-label"><span data-i18n="emoji.label">Emoji einfügen</span></span>
         <div class="emoji-row" id="emoji-row" role="group" aria-labelledby="emoji-label"></div>
       </div>
-      <!-- @full-end -->
     </fieldset>
 
-    <!-- 4. Ring -->
+    <!-- 4. Logo (nur im Browser) -->
+    <fieldset class="panel" data-panel="logo">
+      <legend data-i18n="logo.heading">4. Logo</legend>
+      <p class="small muted" data-i18n="logo.hint">Am besten wirkt ein Logo mit transparentem Hintergrund. Es bleibt auf deinem Gerät.</p>
+      <div class="button-row">
+        <label class="btn btn-secondary file-button">
+          <span data-i18n="logo.choose">Logo hochladen</span>
+          <input type="file" id="logo-input" class="visually-hidden" accept="image/png,image/jpeg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg">
+        </label>
+        <button type="button" class="btn btn-ghost" id="logo-remove" data-i18n="logo.remove" hidden>Logo entfernen</button>
+      </div>
+      <p class="small muted" data-i18n="logo.formats">PNG, JPG, WebP oder SVG</p>
+      <p class="status" id="logo-status" role="status" aria-live="polite"></p>
+      <div id="logo-settings" hidden>
+        <div class="field">
+          <span class="label" id="logoPos-label" data-i18n="logo.pos">Position</span>
+          <div class="segmented segmented-text segmented-wrap" role="radiogroup" aria-labelledby="logoPos-label">
+            <label><input type="radio" name="logoPos" value="start"><span data-i18n="logo.start">Links vom Text</span></label>
+            <label><input type="radio" name="logoPos" value="end"><span data-i18n="logo.end">Rechts vom Text</span></label>
+            <label><input type="radio" name="logoPos" value="replace"><span data-i18n="logo.replace">Statt Text</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-head"><label for="logoSize" data-i18n="logo.size">Logogröße</label><output for="logoSize" id="logoSize-out"></output></div>
+          <input type="range" id="logoSize" min="40" max="100" step="1" data-unit="pct">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 5. Ring -->
     <fieldset class="panel" data-panel="ring">
-      <legend data-i18n="ring.heading">4. Ring</legend>
+      <legend data-i18n="ring.heading">5. Ring</legend>
       <div class="field color-field">
         <label for="ringColor" data-i18n="ring.color">Ringfarbe</label>
         <div class="color-inputs">
@@ -147,9 +175,8 @@
           <input type="text" class="hex" id="ringColor-hex" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="hex.label" aria-label="Hex-Code">
         </div>
       </div>
-      <!-- @full-start -->
-      <div class="toggles" data-premium-feature="gradient">
-        <label class="switch"><input type="checkbox" id="gradient"><span class="track" aria-hidden="true"></span><span data-i18n="ring.gradient">Farbverlauf</span> <span class="pro-badge" aria-hidden="true">PRO</span></label>
+      <div class="toggles">
+        <label class="switch"><input type="checkbox" id="gradient"><span class="track" aria-hidden="true"></span><span data-i18n="ring.gradient">Farbverlauf</span></label>
       </div>
       <div class="field color-field" id="ringColor2-field">
         <label for="ringColor2" data-i18n="ring.color2">Zweite Farbe</label>
@@ -158,7 +185,6 @@
           <input type="text" class="hex" id="ringColor2-hex" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="hex.label" aria-label="Hex-Code">
         </div>
       </div>
-      <!-- @full-end -->
 
       <div class="field">
         <div class="field-head"><label for="ringWidth" data-i18n="ring.width">Ringbreite</label><output for="ringWidth" id="ringWidth-out"></output></div>
@@ -182,9 +208,9 @@
       </div>
     </fieldset>
 
-    <!-- 5. Export -->
+    <!-- 6. Export -->
     <fieldset class="panel export-panel" data-panel="export">
-      <legend data-i18n="export.heading">5. Export</legend>
+      <legend data-i18n="export.heading">6. Export</legend>
       <div class="field-row">
         <div class="field">
           <span class="label" id="bg-label" data-i18n="export.bg">Hintergrund außerhalb des Kreises</span>
@@ -193,15 +219,13 @@
             <label><input type="radio" name="bg" value="#ffffff"><span data-i18n="export.white">Weiß</span></label>
           </div>
         </div>
-        <!-- @full-start -->
         <div class="field">
           <span class="label" id="size-label" data-i18n="export.size">Auflösung</span>
           <div class="segmented segmented-text" role="radiogroup" aria-labelledby="size-label">
             <label><input type="radio" name="exportSize" value="1080"><span>1080 px</span></label>
-            <label data-premium-feature="size"><input type="radio" name="exportSize" value="2048"><span>2048 px</span> <span class="pro-badge" aria-hidden="true">PRO</span></label>
+            <label><input type="radio" name="exportSize" value="2048"><span>2048 px</span></label>
           </div>
         </div>
-        <!-- @full-end -->
       </div>
       <div class="button-row">
         <button type="button" class="btn btn-primary" id="download">
@@ -214,46 +238,10 @@
         </button>
       </div>
       <p class="status" id="export-status" role="status" aria-live="polite"></p>
-      <p class="small muted" id="watermark-note" data-free-only>
-        <span id="watermark-note-text"></span>
-        <!-- @full-start -->
-        <button type="button" class="text-button" id="watermark-upgrade" data-i18n="export.watermarkUpgrade">Ohne Hinweis mit Premium</button>
-        <!-- @full-end -->
-      </p>
       <p class="small muted" data-i18n="export.info">Tipp: Die meisten Netzwerke schneiden Profilbilder automatisch rund zu.</p>
     </fieldset>
   </section>
 </div>
-
-<!-- @full-start -->
-<!-- Upgrade-Dialog -->
-<dialog class="dialog" id="upgrade-dialog" aria-labelledby="upgrade-title">
-  <form method="dialog" class="dialog-close-form"><button class="icon-button" value="close" data-i18n-aria="share.close" aria-label="Schließen">✕</button></form>
-  <h2 id="upgrade-title"><span class="pro-badge" aria-hidden="true">PRO</span> <span data-i18n="upgrade.title">Premium freischalten</span></h2>
-  <p class="upgrade-reason" id="upgrade-reason"></p>
-  <p data-i18n="upgrade.lead">Einmalig – kein Abo, kein Konto, kein Passwort.</p>
-  <ul class="check-list">
-    <li data-i18n="upgrade.f1">Kein Hinweis im Bild</li>
-    <li data-i18n="upgrade.f2">Farbverläufe</li>
-    <li data-i18n="upgrade.f3">5 zusätzliche Schriftarten</li>
-    <li data-i18n="upgrade.f4">20+ Premium-Vorlagen</li>
-    <li data-i18n="upgrade.f5">Symbole &amp; Emojis im Ring</li>
-    <li data-i18n="upgrade.f6">Export in 2048 × 2048 px</li>
-  </ul>
-  <label class="consent"><input type="checkbox" id="upgrade-consent"> <span data-i18n="upgrade.consent">Ich verlange ausdrücklich, dass mit der Freischaltung sofort begonnen wird …</span></label>
-  <button type="button" class="btn btn-primary btn-block" id="upgrade-buy" disabled data-i18n="upgrade.buy">Jetzt freischalten</button>
-  <p class="small muted center"><span data-i18n="upgrade.legal">Es gelten die AGB. Sichere Zahlung über Stripe.</span> <a href="{{base}}/premium/" data-i18n="upgrade.more">Alle Details zu Premium</a></p>
-  <p class="status" id="upgrade-status" role="status" aria-live="polite"></p>
-  <details class="key-entry">
-    <summary data-i18n="upgrade.haveKey">Schon gekauft? Lizenzschlüssel eingeben</summary>
-    <div class="inline-form">
-      <label class="visually-hidden" for="license-input" data-i18n="upgrade.keyLabel">Lizenzschlüssel</label>
-      <input type="text" id="license-input" placeholder="PR-XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false">
-      <button type="button" class="btn btn-secondary" id="license-activate" data-i18n="upgrade.activate">Aktivieren</button>
-    </div>
-  </details>
-</dialog>
-<!-- @full-end -->
 
 <!-- Teilen-Dialog -->
 <dialog class="dialog" id="share-dialog" aria-labelledby="share-title">

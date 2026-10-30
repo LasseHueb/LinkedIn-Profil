@@ -17,9 +17,6 @@ PBG.I18N = {
 
     "preview.canvasLabel": "Vorschau des Profilbilds mit Ring. Text: {text}. Mit Pfeiltasten verschieben, mit Plus und Minus zoomen.",
     "preview.hint": "Ziehen zum Verschieben · Mausrad, Pinch oder +/− zum Zoomen · Pfeiltasten verschieben",
-    "preview.mini": "So wirkt es im Feed",
-    "preview.miniName": "Dein Name",
-    "preview.miniMeta": "Deine Position · gerade eben",
 
     "upload.heading": "1. Foto",
     "upload.drop": "Foto hierher ziehen oder",
@@ -36,12 +33,40 @@ PBG.I18N = {
 
     "presets.heading": "2. Vorlage",
     "presets.hint": "Startpunkt wählen – danach alles frei anpassbar.",
-    /* @full-start */
-    "presets.free": "Kostenlos",
-    "presets.premium": "Premium-Vorlagen",
-    "presets.more": "Alle {count} Premium-Vorlagen anzeigen",
-    /* @full-end */
+    "presets.more": "Alle {count} Vorlagen anzeigen",
     "presets.less": "Weniger anzeigen",
+    "presets.builtin": "Vorlagen",
+
+    "own.heading": "Meine Vorlagen",
+    "own.empty": "Noch keine eigenen Vorlagen. Gestalte deinen Rahmen und speichere ihn hier – auf diesem Gerät, ohne Foto.",
+    "own.nameLabel": "Name der Vorlage",
+    "own.namePlaceholder": "z. B. Team-Rahmen 2027",
+    "own.save": "Als eigene Vorlage speichern",
+    "own.saved": "„{name}“ wurde auf diesem Gerät gespeichert.",
+    "own.nameMissing": "Bitte gib einen Namen für die Vorlage ein.",
+    "own.apply": "Vorlage „{name}“ verwenden",
+    "own.withLogo": "mit Logo",
+    "own.rename": "Umbenennen",
+    "own.renameLabel": "Neuer Name für „{name}“",
+    "own.renameSave": "Speichern",
+    "own.renameCancel": "Abbrechen",
+    "own.renamed": "Vorlage umbenannt in „{name}“.",
+    "own.export": "Als Datei exportieren",
+    "own.exported": "„{name}“ wurde als Datei gespeichert.",
+    "own.import": "Aus Datei importieren",
+    "own.imported": "„{name}“ wurde importiert.",
+    "own.importDropped": "Ungültige oder unbekannte Angaben wurden verworfen: {fields}.",
+    "own.delete": "Löschen",
+    "own.confirmDelete": "Vorlage „{name}“ wirklich löschen? Das lässt sich nicht rückgängig machen.",
+    "own.deleted": "„{name}“ wurde gelöscht.",
+    "own.limit": "Es sind höchstens {max} eigene Vorlagen möglich. Lösche zuerst eine alte Vorlage.",
+    "own.errorFull": "Der Speicher deines Browsers ist voll. Lösche alte Vorlagen oder verwende ein kleineres Logo – oder exportiere die Vorlage als Datei.",
+    "own.errorBlocked": "Dein Browser erlaubt keine lokale Speicherung (z. B. im privaten Modus). Exportiere die Vorlage stattdessen als Datei.",
+    "own.errorFile": "Diese Datei ist keine gültige Vorlage.",
+    "own.errorFileSize": "Die Datei ist zu groß (höchstens 1 MB).",
+    "own.errorFileType": "Bitte eine Vorlagen-Datei im JSON-Format wählen.",
+    "own.unnamed": "Importierte Vorlage",
+
 
     "text.heading": "3. Text",
     "text.label": "Text auf dem Ring",
@@ -56,12 +81,7 @@ PBG.I18N = {
     "text.shrunk": "Der Text ist lang und wurde automatisch auf {percent} % verkleinert.",
     "text.tooLong": "Der Text ist zu lang für den Ring. Kürze ihn oder verlängere den Ring.",
     "text.lowContrast": "Geringer Kontrast zwischen Text und Ring ({ratio}:1) – der Text könnte schwer lesbar sein.",
-    /* @full-start */
-    "text.emojiOmitted": "Emojis im Ring sind eine Premium-Funktion – sie werden im Bild weggelassen.",
-    /* @full-end */
-    /* @free-start */
-    "text.emojiOmitted": "Emojis werden im Bild weggelassen.",
-    /* @free-end */
+    "text.replacedByLogo": "Das Logo steht statt des Texts auf dem Ring. Um wieder Text zu zeigen, wähle unter „Logo“ eine andere Position.",
 
     "icon.label": "Symbol im Ring",
     "icon.none": "Kein Symbol",
@@ -71,7 +91,24 @@ PBG.I18N = {
     "icon.both": "Beidseitig",
     "emoji.label": "Emoji einfügen",
 
-    "ring.heading": "4. Ring",
+    "logo.heading": "4. Logo",
+    "logo.hint": "Am besten wirkt ein Logo mit transparentem Hintergrund. Es bleibt auf deinem Gerät.",
+    "logo.choose": "Logo hochladen",
+    "logo.remove": "Logo entfernen",
+    "logo.formats": "PNG, JPG, WebP oder SVG",
+    "logo.pos": "Position",
+    "logo.start": "Links vom Text",
+    "logo.end": "Rechts vom Text",
+    "logo.replace": "Statt Text",
+    "logo.size": "Logogröße",
+    "logo.loading": "Logo wird geladen …",
+    "logo.loaded": "Logo geladen: {name}",
+    "logo.removed": "Logo entfernt.",
+    "logo.errorType": "Bitte ein Logo als PNG, JPG, WebP oder SVG wählen.",
+    "logo.errorSize": "Die Datei ist zu groß (höchstens {max} MB).",
+    "logo.error": "Dieses Logo konnte nicht geöffnet werden. Bitte PNG, JPG, WebP oder SVG verwenden.",
+
+    "ring.heading": "5. Ring",
     "ring.color": "Ringfarbe",
     "ring.gradient": "Farbverlauf",
     "ring.color2": "Zweite Farbe",
@@ -81,7 +118,7 @@ PBG.I18N = {
     "ring.fade": "Weicher Übergang an den Enden",
     "ring.opacity": "Deckkraft",
 
-    "export.heading": "5. Export",
+    "export.heading": "6. Export",
     "export.bg": "Hintergrund außerhalb des Kreises",
     "export.transparent": "Transparent",
     "export.white": "Weiß",
@@ -89,51 +126,9 @@ PBG.I18N = {
     "export.download": "PNG herunterladen · {size} px",
     "export.share": "Bild teilen",
     "export.info": "Tipp: Die meisten Netzwerke schneiden Profilbilder automatisch rund zu.",
-    /* @full-start */
-    "export.watermarkNote": "Kostenlose Bilder enthalten unten einen kleinen Hinweis „{watermark}“.",
-    "export.watermarkUpgrade": "Ohne Hinweis mit Premium",
-    /* @full-end */
-    /* @free-start */
-    "export.watermarkNote": "Die Bilder enthalten unten einen kleinen Hinweis „{watermark}“.",
-    /* @free-end */
     "export.done": "Bild wurde erstellt.",
     "export.shareError": "Teilen ist fehlgeschlagen. Nutze stattdessen „Herunterladen“.",
     "export.filename": "profilbild-rahmen.png",
-
-    "watermark": "Erstellt mit {app}",
-
-    /* @full-start */
-    "premium.lockSuffix": "  🔒 PRO",
-    "premium.badge": "Premium",
-    "premium.locked": "Premium-Funktion – zum Freischalten klicken",
-    "premium.active": "Premium aktiv",
-
-    "upgrade.title": "Premium freischalten",
-    "upgrade.lead": "Einmalig {price} – kein Abo, kein Konto, kein Passwort.",
-    "upgrade.reason.gradient": "Farbverläufe gehören zu Premium.",
-    "upgrade.reason.font": "Diese Schriftart gehört zu Premium.",
-    "upgrade.reason.preset": "Die Vorlage „{name}“ gehört zu Premium.",
-    "upgrade.reason.icon": "Symbole und Emojis im Ring gehören zu Premium.",
-    "upgrade.reason.size": "Der Export in 2048 × 2048 px gehört zu Premium.",
-    "upgrade.reason.watermark": "Bilder ohne Hinweis „Erstellt mit …“ gibt es mit Premium.",
-    "upgrade.f1": "Kein Hinweis im Bild",
-    "upgrade.f2": "Farbverläufe",
-    "upgrade.f3": "5 zusätzliche Schriftarten",
-    "upgrade.f4": "20+ Premium-Vorlagen",
-    "upgrade.f5": "Symbole & Emojis im Ring",
-    "upgrade.f6": "Export in 2048 × 2048 px",
-    "upgrade.consent": "Ich verlange ausdrücklich, dass mit der Freischaltung sofort begonnen wird, und weiß, dass ich dadurch mein Widerrufsrecht verliere.",
-    "upgrade.buy": "Jetzt für {price} freischalten",
-    "upgrade.legal": "Es gelten die AGB. Sichere Zahlung über Stripe.",
-    "upgrade.haveKey": "Schon gekauft? Lizenzschlüssel eingeben",
-    "upgrade.keyLabel": "Lizenzschlüssel",
-    "upgrade.activate": "Aktivieren",
-    "upgrade.invalid": "Dieser Lizenzschlüssel ist ungültig.",
-    "upgrade.success": "Premium ist aktiv. Viel Spaß!",
-    "upgrade.unavailable": "Der Kauf ist gerade nicht möglich. Bitte versuche es später erneut.",
-    "upgrade.redirecting": "Weiterleitung zu Stripe …",
-    "upgrade.more": "Alle Details zu Premium",
-    /* @full-end */
 
     "share.title": "Gefällt dir dein Rahmen?",
     "share.lead": "Teile die App mit deinem Netzwerk – das hilft uns sehr, kostenlos zu bleiben.",
@@ -143,8 +138,6 @@ PBG.I18N = {
     "share.more": "Teilen …",
     "share.close": "Schließen",
     "share.dontShow": "Nicht mehr anzeigen",
-
-    "team.locked": "Dieser Rahmen wurde von {company} festgelegt. Lade einfach dein Foto hoch.",
 
     "hex.label": "Hex-Code",
     "hex.invalid": "Ungültiger Hex-Code",
@@ -162,9 +155,6 @@ PBG.I18N = {
 
     "preview.canvasLabel": "Preview of the profile picture with ring. Text: {text}. Use arrow keys to move, plus and minus to zoom.",
     "preview.hint": "Drag to move · scroll wheel, pinch or +/− to zoom · arrow keys move",
-    "preview.mini": "How it looks in the feed",
-    "preview.miniName": "Your Name",
-    "preview.miniMeta": "Your position · just now",
 
     "upload.heading": "1. Photo",
     "upload.drop": "Drop a photo here or",
@@ -181,12 +171,40 @@ PBG.I18N = {
 
     "presets.heading": "2. Template",
     "presets.hint": "Pick a starting point – everything can be customised afterwards.",
-    /* @full-start */
-    "presets.free": "Free",
-    "presets.premium": "Premium templates",
-    "presets.more": "Show all {count} premium templates",
-    /* @full-end */
+    "presets.more": "Show all {count} templates",
     "presets.less": "Show less",
+    "presets.builtin": "Templates",
+
+    "own.heading": "My templates",
+    "own.empty": "No templates of your own yet. Design your frame and save it here – on this device, without your photo.",
+    "own.nameLabel": "Template name",
+    "own.namePlaceholder": "e.g. Team frame 2027",
+    "own.save": "Save as my template",
+    "own.saved": "“{name}” was saved on this device.",
+    "own.nameMissing": "Please enter a name for the template.",
+    "own.apply": "Use template “{name}”",
+    "own.withLogo": "with logo",
+    "own.rename": "Rename",
+    "own.renameLabel": "New name for “{name}”",
+    "own.renameSave": "Save",
+    "own.renameCancel": "Cancel",
+    "own.renamed": "Template renamed to “{name}”.",
+    "own.export": "Export as file",
+    "own.exported": "“{name}” was saved as a file.",
+    "own.import": "Import from file",
+    "own.imported": "“{name}” was imported.",
+    "own.importDropped": "Invalid or unknown entries were discarded: {fields}.",
+    "own.delete": "Delete",
+    "own.confirmDelete": "Really delete template “{name}”? This cannot be undone.",
+    "own.deleted": "“{name}” was deleted.",
+    "own.limit": "You can keep at most {max} templates. Please delete an old one first.",
+    "own.errorFull": "Your browser's storage is full. Delete old templates or use a smaller logo – or export the template as a file.",
+    "own.errorBlocked": "Your browser does not allow local storage (e.g. in private mode). Export the template as a file instead.",
+    "own.errorFile": "This file is not a valid template.",
+    "own.errorFileSize": "The file is too large (max. 1 MB).",
+    "own.errorFileType": "Please choose a template file in JSON format.",
+    "own.unnamed": "Imported template",
+
 
     "text.heading": "3. Text",
     "text.label": "Text on the ring",
@@ -201,12 +219,7 @@ PBG.I18N = {
     "text.shrunk": "The text is long and was automatically reduced to {percent} %.",
     "text.tooLong": "The text is too long for the ring. Shorten it or make the ring longer.",
     "text.lowContrast": "Low contrast between text and ring ({ratio}:1) – the text may be hard to read.",
-    /* @full-start */
-    "text.emojiOmitted": "Emojis on the ring are a premium feature – they are left out of the image.",
-    /* @full-end */
-    /* @free-start */
-    "text.emojiOmitted": "Emojis are left out of the image.",
-    /* @free-end */
+    "text.replacedByLogo": "The logo replaces the text on the ring. To show text again, choose another position under “Logo”.",
 
     "icon.label": "Symbol on the ring",
     "icon.none": "No symbol",
@@ -216,7 +229,24 @@ PBG.I18N = {
     "icon.both": "Both sides",
     "emoji.label": "Insert emoji",
 
-    "ring.heading": "4. Ring",
+    "logo.heading": "4. Logo",
+    "logo.hint": "A logo with a transparent background works best. It stays on your device.",
+    "logo.choose": "Upload logo",
+    "logo.remove": "Remove logo",
+    "logo.formats": "PNG, JPG, WebP or SVG",
+    "logo.pos": "Position",
+    "logo.start": "Left of the text",
+    "logo.end": "Right of the text",
+    "logo.replace": "Instead of text",
+    "logo.size": "Logo size",
+    "logo.loading": "Loading logo …",
+    "logo.loaded": "Logo loaded: {name}",
+    "logo.removed": "Logo removed.",
+    "logo.errorType": "Please choose a PNG, JPG, WebP or SVG logo.",
+    "logo.errorSize": "The file is too large (max. {max} MB).",
+    "logo.error": "This logo could not be opened. Please use PNG, JPG, WebP or SVG.",
+
+    "ring.heading": "5. Ring",
     "ring.color": "Ring colour",
     "ring.gradient": "Gradient",
     "ring.color2": "Second colour",
@@ -226,7 +256,7 @@ PBG.I18N = {
     "ring.fade": "Soft fade at the ends",
     "ring.opacity": "Opacity",
 
-    "export.heading": "5. Export",
+    "export.heading": "6. Export",
     "export.bg": "Background outside the circle",
     "export.transparent": "Transparent",
     "export.white": "White",
@@ -234,51 +264,9 @@ PBG.I18N = {
     "export.download": "Download PNG · {size} px",
     "export.share": "Share image",
     "export.info": "Tip: most networks crop profile pictures to a circle automatically.",
-    /* @full-start */
-    "export.watermarkNote": "Free images contain a small “{watermark}” note at the bottom.",
-    "export.watermarkUpgrade": "Remove it with Premium",
-    /* @full-end */
-    /* @free-start */
-    "export.watermarkNote": "Images contain a small “{watermark}” note at the bottom.",
-    /* @free-end */
     "export.done": "Image created.",
     "export.shareError": "Sharing failed. Please use “Download” instead.",
     "export.filename": "profile-frame.png",
-
-    "watermark": "Made with {app}",
-
-    /* @full-start */
-    "premium.lockSuffix": "  🔒 PRO",
-    "premium.badge": "Premium",
-    "premium.locked": "Premium feature – click to unlock",
-    "premium.active": "Premium active",
-
-    "upgrade.title": "Unlock Premium",
-    "upgrade.lead": "One-time {price} – no subscription, no account, no password.",
-    "upgrade.reason.gradient": "Gradients are part of Premium.",
-    "upgrade.reason.font": "This font is part of Premium.",
-    "upgrade.reason.preset": "The template “{name}” is part of Premium.",
-    "upgrade.reason.icon": "Symbols and emojis on the ring are part of Premium.",
-    "upgrade.reason.size": "Exporting at 2048 × 2048 px is part of Premium.",
-    "upgrade.reason.watermark": "Images without the “Made with …” note come with Premium.",
-    "upgrade.f1": "No note in the image",
-    "upgrade.f2": "Gradients",
-    "upgrade.f3": "5 extra fonts",
-    "upgrade.f4": "20+ premium templates",
-    "upgrade.f5": "Symbols & emojis on the ring",
-    "upgrade.f6": "Export at 2048 × 2048 px",
-    "upgrade.consent": "I expressly request that the unlock starts immediately and understand that I thereby lose my right of withdrawal.",
-    "upgrade.buy": "Unlock now for {price}",
-    "upgrade.legal": "Terms apply. Secure payment via Stripe.",
-    "upgrade.haveKey": "Already bought? Enter licence key",
-    "upgrade.keyLabel": "Licence key",
-    "upgrade.activate": "Activate",
-    "upgrade.invalid": "This licence key is invalid.",
-    "upgrade.success": "Premium is active. Enjoy!",
-    "upgrade.unavailable": "Purchasing is currently unavailable. Please try again later.",
-    "upgrade.redirecting": "Redirecting to Stripe …",
-    "upgrade.more": "All Premium details",
-    /* @full-end */
 
     "share.title": "Like your frame?",
     "share.lead": "Share the app with your network – it really helps us stay free.",
@@ -288,8 +276,6 @@ PBG.I18N = {
     "share.more": "Share …",
     "share.close": "Close",
     "share.dontShow": "Don't show again",
-
-    "team.locked": "This frame was set by {company}. Just upload your photo.",
 
     "hex.label": "Hex code",
     "hex.invalid": "Invalid hex code",
@@ -323,8 +309,7 @@ PBG.loc = function (obj) {
 PBG.applyI18n = function (root) {
   root = root || document;
   var vars = {
-    app: (PBG.config && PBG.config.appName) || "",
-    price: (PBG.config && PBG.config.premium && PBG.config.premium.price) || ""
+    app: (PBG.config && PBG.config.appName) || ""
   };
   root.querySelectorAll("[data-i18n]").forEach(function (el) {
     el.textContent = PBG.t(el.getAttribute("data-i18n"), vars);
