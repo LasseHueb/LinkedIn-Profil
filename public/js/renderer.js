@@ -326,33 +326,13 @@ window.PBG = window.PBG || {};
     ctx.restore();
   }
 
-  /** Dezenter Hinweis „Erstellt mit …“ am unteren Bildrand (innerhalb des Kreises). */
-  function drawWatermark(ctx, text, L, size) {
-    var px = Math.max(8, size * 0.024);
-    ctx.save();
-    ctx.font = "600 " + px.toFixed(2) + 'px "Nunito", system-ui, sans-serif';
-    var w = ctx.measureText(text).width + px * 1.2;
-    var h = px * 1.7;
-    var x = size / 2 - w / 2;
-    var y = size / 2 + (L.R - L.ringW) - h - size * 0.012;
-    ctx.fillStyle = "rgba(0,0,0,0.38)";
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(x, y, w, h, h / 2); else ctx.rect(x, y, w, h);
-    ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.92)";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(text, size / 2, y + h / 2 + px * 0.05);
-    ctx.restore();
-  }
-
   /**
    * Hauptfunktion. Gibt Infos zur Textskalierung zurück (für Warnhinweise).
    * @param {CanvasRenderingContext2D} ctx
    * @param {object} state  Einstellungen inkl. zoom/offsetX/offsetY
    * @param {CanvasImageSource|null} photo
    * @param {number} size   Kantenlänge in Gerätepixeln
-   * @param {{background?: string, watermark?: string, logo?: CanvasImageSource}} opts
+   * @param {{background?: string, logo?: CanvasImageSource}} opts
    */
   PBG.render = function (ctx, state, photo, size, opts) {
     opts = opts || {};
@@ -372,7 +352,6 @@ window.PBG = window.PBG || {};
     var L = layout(lc, state, size, !!opts.logo);
     drawRing(lc, state, L, size);
     drawText(lc, state, L, size, opts.logo);
-    if (opts.watermark) drawWatermark(lc, opts.watermark, L, size);
 
     lc.globalCompositeOperation = "destination-in";
     lc.beginPath();

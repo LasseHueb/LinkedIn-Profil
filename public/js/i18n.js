@@ -79,13 +79,9 @@ PBG.I18N = {
     "export.download": "PNG herunterladen · {size} px",
     "export.share": "Bild teilen",
     "export.info": "Tipp: Die meisten Netzwerke schneiden Profilbilder automatisch rund zu.",
-    "export.watermarkNote": "Die Bilder enthalten unten einen kleinen Hinweis „{watermark}“.",
     "export.done": "Bild wurde erstellt.",
     "export.shareError": "Teilen ist fehlgeschlagen. Nutze stattdessen „Herunterladen“.",
     "export.filename": "profilbild-rahmen.png",
-
-    "watermark": "Erstellt mit {app}",
-
 
     "share.title": "Gefällt dir dein Rahmen?",
     "share.lead": "Teile die App mit deinem Netzwerk – das hilft uns sehr, kostenlos zu bleiben.",
@@ -174,13 +170,9 @@ PBG.I18N = {
     "export.download": "Download PNG · {size} px",
     "export.share": "Share image",
     "export.info": "Tip: most networks crop profile pictures to a circle automatically.",
-    "export.watermarkNote": "Images contain a small “{watermark}” note at the bottom.",
     "export.done": "Image created.",
     "export.shareError": "Sharing failed. Please use “Download” instead.",
     "export.filename": "profile-frame.png",
-
-    "watermark": "Made with {app}",
-
 
     "share.title": "Like your frame?",
     "share.lead": "Share the app with your network – it really helps us stay free.",

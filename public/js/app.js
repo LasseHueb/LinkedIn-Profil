@@ -36,7 +36,6 @@
     gradient: $("gradient"), ringColor2Field: $("ringColor2-field"),
     textWarning: $("text-warning"), contrastWarning: $("contrast-warning"),
     download: $("download"), downloadLabel: $("download-label"), share: $("share"), exportStatus: $("export-status"),
-    watermarkNoteText: $("watermark-note-text"),
     shareDialog: $("share-dialog"), shareStatus: $("share-status"), shareDontShow: $("share-dont-show")
   };
 
@@ -75,10 +74,6 @@
     if (!el) return;
     el.textContent = msg || "";
     el.classList.toggle("error", !!isError);
-  }
-
-  function watermarkText() {
-    return t("watermark", { app: cfg.appName });
   }
 
   function showDialog(d) {
@@ -133,7 +128,7 @@
   }
 
   function renderOpts(extra) {
-    return Object.assign({ watermark: watermarkText(), logo: logo }, extra || {});
+    return Object.assign({ logo: logo }, extra || {});
   }
 
   function renderAll() {
@@ -141,7 +136,7 @@
     var size = sizeCanvas(els.preview);
     lastInfo = PBG.render(els.preview.getContext("2d"), s, photo, size, renderOpts());
     [els.mini, els.miniXs].forEach(function (c) {
-      PBG.render(c.getContext("2d"), s, photo, sizeCanvas(c), renderOpts({ watermark: "" }));
+      PBG.render(c.getContext("2d"), s, photo, sizeCanvas(c), renderOpts());
     });
     updateWarnings();
     els.preview.setAttribute("aria-label", t("preview.canvasLabel", { text: state.text || "–" }));
@@ -782,7 +777,6 @@
 
   function init() {
     PBG.applyI18n();
-    els.watermarkNoteText.textContent = t("export.watermarkNote", { watermark: watermarkText() });
 
     buildFontOptions();
     buildIconOptions();

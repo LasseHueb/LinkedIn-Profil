@@ -27,7 +27,7 @@ export const home = {
   "faq": [
     [
       "Ist der Profilbild-Rahmen wirklich kostenlos?",
-      "Ja. Du kannst unbegrenzt Rahmen gestalten und herunterladen – ohne Anmeldung, ohne Abo und ohne versteckte Kosten. Die Bilder enthalten unten einen kleinen Hinweis „Erstellt mit {app}“."
+      "Ja. Du kannst unbegrenzt Rahmen gestalten und herunterladen – ohne Anmeldung, ohne Abo und ohne versteckte Kosten."
     ],
     [
       "Wird mein Foto hochgeladen?",
