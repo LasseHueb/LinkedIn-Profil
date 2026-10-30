@@ -45,7 +45,7 @@ PBG.I18N = {
 
     "text.heading": "3. Text",
     "text.label": "Text auf dem Ring",
-    "text.placeholder": "#OFFENFÜRJOBS",
+    "text.placeholder": "Dein Text, z. B. Suche Job im Marketing",
     "text.font": "Schriftart",
     "text.size": "Schriftgröße",
     "text.bold": "Fett",
@@ -190,7 +190,7 @@ PBG.I18N = {
 
     "text.heading": "3. Text",
     "text.label": "Text on the ring",
-    "text.placeholder": "#OPENFORWORK",
+    "text.placeholder": "Your text, e.g. Looking for a marketing role",
     "text.font": "Font",
     "text.size": "Font size",
     "text.bold": "Bold",

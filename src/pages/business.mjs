@@ -79,7 +79,7 @@ export default function pages(ctx) {
     <ol class="steps">
       <li><strong>Anmelden</strong>Im Admin-Bereich mit eurer E-Mail-Adresse – per Magic-Link, ohne Passwort.</li>
       <li><strong>Rahmen gestalten</strong>Text (z. B. „Wir stellen ein“), Farben, Schrift und Logo festlegen und sperren.</li>
-      <li><strong>Link teilen</strong>Den Link <code>${esc(c.siteUrl.replace(/^https?:\/\//, ""))}${esc(c.basePath)}/team/eure-firma</code> per Mail, Intranet oder Slack verteilen.</li>
+      <li><strong>Link teilen</strong>Den Link <code>${esc(c.siteUrl.replace(/^https?:\/\//, ""))}${esc(c.basePath)}/team/eure-firma</code> per Mail, Intranet oder Team-Chat verteilen.</li>
     </ol>
   </section>
 
