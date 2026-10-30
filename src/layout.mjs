@@ -26,7 +26,7 @@ export function fill(ctx, s) {
 }
 
 /**
- * Unabhängigkeitshinweis – die einzige Stelle, an der LinkedIn genannt wird (Footer und Impressum).
+ * Unabhängigkeitshinweis – die einzige Stelle, an der ein soziales Netzwerk namentlich genannt wird (Footer und Impressum).
  * scripts/check-dist.mjs lässt nur Zeilen mit „in keiner Verbindung zu“ durch.
  */
 export function independenceNote(ctx) {
